@@ -69,7 +69,7 @@ function GaussianEliminationLTM(mat, b)
             error("Zero pivot element encountered")
         end
 
-        for i in 1:k-1
+        for i in k-1:-1:1
             factor = mat[i, k] / mat[k, k]
             mat[i, :] -= factor * mat[k, :]
             b[i] -= factor * b[k]
@@ -111,6 +111,7 @@ function solveLinearEquationLTM(ltm, b)
     @threads for j in 1:ltm_size[1]
         if ltm[j, j] == 0
             println("The provided matrix is singluar")
+            break
         end
 
         res[j] = b[j] / ltm[j, j]
