@@ -46,11 +46,11 @@ A = convert(
 
 L, U = LUFactorization(A)
 
-# println("The Lower Triangular Matrix L :")
-# display(L)
+println("The Lower Triangular Matrix L :")
+display(L)
 
-# println("The Upper Triangular Matrix L :")
-# display(U)
+println("The Upper Triangular Matrix L :")
+display(U)
 
 # println("A = L * U : ")
 # display(L*U)
