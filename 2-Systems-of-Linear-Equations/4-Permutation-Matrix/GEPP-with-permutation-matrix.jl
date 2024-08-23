@@ -25,7 +25,6 @@ function LUFactorization(A::Matrix)
         idx = argmax(abs.(U[i:n, i])) + (i - 1)
 
         if idx != i && i != n
-            swapRow(idx, i, A)
             swapRow(idx, i, L)
             swapRow(idx, i, U)
             swapRow(idx, i, P)
