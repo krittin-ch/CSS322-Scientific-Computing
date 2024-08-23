@@ -1,5 +1,5 @@
 # Gaussian Elimination with Complete Pivoting (GECP)
-# Unlike GEEP, GECP exchange rows and columns to bring the largest uneliminated entry of a matrix to pivot position
+# Unlike GEPP, GECP exchange rows and columns to bring the largest uneliminated entry of a matrix to pivot position
 
 using LinearAlgebra
 
