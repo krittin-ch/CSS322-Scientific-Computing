@@ -35,7 +35,7 @@ b = Vector([-1; 0; 1])
 A_size = size(A)
 b_size = size(b)
 
-function GaussianEliminationUTM(mat, b)
+function Gaussian_elimination_UTM(mat, b)
     mat_size = size(mat)
 
     mat = convert(Matrix{Float64}, mat)
@@ -57,7 +57,7 @@ function GaussianEliminationUTM(mat, b)
     return mat, b
 end
 
-function GaussianEliminationLTM(mat, b)
+function Gaussian_elimination_LTM(mat, b)
     mat_size = size(mat)
 
     mat = convert(Matrix{Float64}, mat)
@@ -83,7 +83,7 @@ end
 # using concerrent for-loop
 using Base.Threads
 
-function solveLinearEquationUTM(utm, b)
+function solve_linear_equation_UTM(utm, b)
     utm_size = size(utm)
     res = zeros(Float64, utm_size[1], 1)
     b = convert(Vector{Float64}, b)
@@ -103,7 +103,7 @@ function solveLinearEquationUTM(utm, b)
     return res
 end
 
-function solveLinearEquationLTM(ltm, b)
+function solve_linear_equation_LTM(ltm, b)
     ltm_size = size(ltm)
     res = zeros(Float64, ltm_size[1], 1)
     b = convert(Vector{Float64}, b)
@@ -125,31 +125,31 @@ function solveLinearEquationLTM(ltm, b)
 end
 
 println("The upper triangular matrix of matrix A : ")
-U, b_u = GaussianEliminationUTM(A, b)
+U, b_u = Gaussian_elimination_UTM(A, b)
 display(U)
 
-x1 = solveLinearEquationUTM(U, b_u)
+x1 = solve_linear_equation_UTM(U, b_u)
 println("The linear equation results : ")
 display(x1)
 println()
 
 println("The lower triangular matrix of matrix A : ")
-L, b_l = GaussianEliminationLTM(A, b)
+L, b_l = Gaussian_elimination_LTM(A, b)
 display(L)
 
-x2 = solveLinearEquationLTM(L, b_l)
+x2 = solve_linear_equation_LTM(L, b_l)
 println("The linear equation results : ")
 display(x2)
 println()
 
-function solveLinearEquation(A, b)
+function solve_linear_equation(A, b)
     A = convert(Matrix{Float64}, A)
     b = convert(Vector{Float64}, b)
-    U, b_u = GaussianEliminationUTM(A, b)
+    U, b_u = Gaussian_elimination_UTM(A, b)
     
-    return solveLinearEquationUTM(U, b_u)
+    return solve_linear_equation_UTM(U, b_u)
 end
 
-res = solveLinearEquation(A, b)
+res = solve_linear_equation(A, b)
 println("The linear equation results : ")
 display(res)

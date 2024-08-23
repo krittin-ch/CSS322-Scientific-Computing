@@ -49,7 +49,7 @@
             ]
 =#
 
-function createPermutationMatrix(vec::Vector{Int})
+function create_permutation_matrix(vec::Vector{Int})
     vec_size = size(vec, 1)
     mat = zeros(vec_size, vec_size)
 
@@ -64,7 +64,7 @@ end
 
 v1 = Vector([2; 4; 3; 1])
 
-I_n = createPermutationMatrix(v1)
+I_n = create_permutation_matrix(v1)
 
 I_nT = transpose(I_n)
 
@@ -80,12 +80,12 @@ A = Matrix([
 v_p = Vector([2; 3; 1])
 v_q = Vector([4; 2; 1; 3])
 
-P = createPermutationMatrix(v_p)
-Q = createPermutationMatrix(v_q)
+P = create_permutation_matrix(v_p)
+Q = create_permutation_matrix(v_q)
 
 new_A = P*A*transpose(Q)
 
 display(A)
 display(new_A)
 
-display(P*Q)
+# display(P*Q)

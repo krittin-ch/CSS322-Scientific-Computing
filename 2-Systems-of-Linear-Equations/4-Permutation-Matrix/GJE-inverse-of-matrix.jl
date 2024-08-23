@@ -13,11 +13,11 @@
 
 using LinearAlgebra
 
-function swapRow(pivot::Int, curr::Int, mat::Matrix) 
+function swap_row(pivot::Int, curr::Int, mat::Matrix) 
     mat[[pivot, curr],:] = mat[[curr, pivot], :]
 end
 
-function LUFactorization(A::Matrix) 
+function LU_factorization(A::Matrix) 
     n = size(A, 1)
     L = zeros(n, n)
     U = deepcopy(A)
@@ -28,9 +28,9 @@ function LUFactorization(A::Matrix)
         idx = argmax(abs.(U[i:n, i]))
 
         if idx != i && i != n
-            swapRow(idx, i, L)
-            swapRow(idx, i, U)
-            swapRow(idx, i, P)
+            swap_row(idx, i, L)
+            swap_row(idx, i, U)
+            swap_row(idx, i, P)
         end
 
         for j in i+1:n
@@ -49,7 +49,7 @@ function LUFactorization(A::Matrix)
     return L, U, P, v
 end
 
-function forwardSubstitution(L::Matrix, e::Vector)
+function forward_substitution(L::Matrix, e::Vector)
     ltm = deepcopy(L)
     n = size(ltm, 1)
 
@@ -67,7 +67,7 @@ function forwardSubstitution(L::Matrix, e::Vector)
     return res
 end
 
-function backwardSubstitution(U::Matrix, w::Vector)
+function backward_substitution(U::Matrix, w::Vector)
     utm = deepcopy(U)
     n = size(utm, 1)
 
@@ -85,8 +85,8 @@ function backwardSubstitution(U::Matrix, w::Vector)
     return res
 end
 
-function inverseMatrix(A::Matrix)
-    L, U, P, _ = LUFactorization(A)
+function inverse_matrix(A::Matrix)
+    L, U, P, _ = LU_factorization(A)
 
     A_inv = Matrix{Float64}(I, size(A)) # The final result in each loop is A_inv = P
     res = zeros(size(A))
@@ -95,8 +95,8 @@ function inverseMatrix(A::Matrix)
         l = deepcopy(L)
         u = deepcopy(U)
         A_inv[:, i] = P * A_inv[:, i]
-        w = forwardSubstitution(l, A_inv[:, i]) 
-        A_inv[:, i] = backwardSubstitution(u, w)  
+        w = forward_substitution(l, A_inv[:, i]) 
+        A_inv[:, i] = backward_substitution(u, w)  
     end
 
     return A_inv
@@ -108,7 +108,7 @@ A = Matrix{Float64}([
     4 6 4
 ])
 
-A_inv = inverseMatrix(A)
+A_inv = inverse_matrix(A)
 
 println("Orignial Matrix : ")
 display(A)

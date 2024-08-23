@@ -15,7 +15,7 @@
 using LinearAlgebra
 
 
-function LUFactorization(A)
+function LU_factorization(A)
     n = size(A, 1)
     L = Matrix{Float64}(I, n, n)  # Initialize L as an identity matrix
     U = deepcopy(A)  # U will start as a copy of A
@@ -44,7 +44,7 @@ A = convert(
     ])
 )
 
-L, U = LUFactorization(A)
+L, U = LU_factorization(A)
 
 println("The Lower Triangular Matrix L :")
 display(L)
@@ -81,7 +81,7 @@ display(U)
 
 using Base.Threads
 
-function solveLinearEquationLTM(A, b) 
+function solve_linear_equation_LTM(A, b) 
     A_size = size(A, 1)
     res = zeros(A_size)
 
@@ -101,7 +101,7 @@ function solveLinearEquationLTM(A, b)
     return res
 end
 
-function solveLinearEquationUTM(A, b) 
+function solve_linear_equation_UTM(A, b) 
     A_size = size(A, 1)
     res = zeros(A_size)
 
@@ -135,7 +135,7 @@ b = convert(
     Vector([-1; 0; 1])
 )
 
-L, U = LUFactorization(A)
+L, U = LU_factorization(A)
 
 println("The Lower Triangular Matrix L :")
 display(L)
@@ -144,13 +144,13 @@ println("The Upper Triangular Matrix L :")
 display(U)
 println()
 
-w = solveLinearEquationLTM(L, b)
+w = solve_linear_equation_LTM(L, b)
 
 println("w (Lw = b) : ")
 display(w)
 println()
 
-x = solveLinearEquationUTM(U, w)
+x = solve_linear_equation_UTM(U, w)
 
 println("x (Ux = w) : ")
 display(x)

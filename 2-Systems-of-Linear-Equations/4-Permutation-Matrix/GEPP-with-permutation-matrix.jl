@@ -2,19 +2,13 @@
 using LinearAlgebra
 
 
-function swapRow(pivot::Int, curr::Int, mat::Matrix) 
+function swap_row(pivot::Int, curr::Int, mat::Matrix) 
     pivotRow = mat[pivot, :]
     mat[pivot, :] = mat[curr, :]
     mat[curr, :] = pivotRow
 end
 
-function swapEle(pivot::Int, curr::Int, vec::Vector) 
-    pivotVal = vec[pivot]
-    vec[pivot] = vec[curr]
-    vec[curr] = pivotVal
-end
-
-function LUFactorization(A::Matrix)
+function LU_factorization(A::Matrix)
     U = deepcopy(A)
     L = zeros(size(A))
     P = Matrix{Float64}(I, size(A))
@@ -25,9 +19,9 @@ function LUFactorization(A::Matrix)
         idx = argmax(abs.(U[i:n, i])) + (i - 1)
 
         if idx != i && i != n
-            swapRow(idx, i, L)
-            swapRow(idx, i, U)
-            swapRow(idx, i, P)
+            swap_row(idx, i, L)
+            swap_row(idx, i, U)
+            swap_row(idx, i, P)
         end
         
         for j in i+1:n
@@ -55,7 +49,7 @@ A = Matrix{Float64}([
 
 b = Vector([-1.; 0.; -2.])
 
-L, U, P, v = LUFactorization(A)
+L, U, P, v = LU_factorization(A)
 
 println("Original Matrix : ")
 display(A)
@@ -98,7 +92,7 @@ println("Vector b_hat : ")
 display(b_hat)
 
 # Solve L * w = b^
-function solveLinearEquationLTM(L::Matrix, b_hat::Vector)
+function solve_linear_equation_LTM(L::Matrix, b_hat::Vector)
     n = size(L, 1)
 
     res = zeros(n)
@@ -114,13 +108,13 @@ function solveLinearEquationLTM(L::Matrix, b_hat::Vector)
     return res
 end
 
-w = solveLinearEquationLTM(L, b_hat)
+w = solve_linear_equation_LTM(L, b_hat)
 
 println("Vector w : ")
 display(w)
 
 # Solve U * x = w for x (backward substitution)
-function solveLinearEquationUTM(U::Matrix, w::Vector)
+function solve_linear_equation_UTM(U::Matrix, w::Vector)
     n = size(U, 1)
 
     res = zeros(n)
@@ -136,7 +130,7 @@ function solveLinearEquationUTM(U::Matrix, w::Vector)
     return res
 end
 
-x = solveLinearEquationUTM(U, w)
+x = solve_linear_equation_UTM(U, w)
 
 println("Vector x : ")
 display(x)

@@ -48,11 +48,11 @@ A = Matrix([
 
 b = Vector([3; -1; -5])
 
-function findPivot(vec::Vector)
+function find_pivot(vec::Vector)
     return argmax(abs.(vec))
 end
 
-function swapRow(pivot::Int, curRow::Int, A::Matrix, b::Vector) 
+function swap_row(pivot::Int, curRow::Int, A::Matrix, b::Vector) 
     pivotVec = A[pivot, :]
     A[pivot, :] = A[curRow, :]
     A[curRow, :] = pivotVec
@@ -74,10 +74,10 @@ function GEPP(A::Matrix, b::Vector)
             break
         end
 
-        idx = findPivot(mat[:, i])
+        idx = find_pivot(mat[:, i])
 
         if idx != i && i != mat_size
-            swapRow(i, idx, mat, y)
+            swap_row(i, idx, mat, y)
         end
 
         for j in i+1:mat_size
@@ -90,7 +90,7 @@ function GEPP(A::Matrix, b::Vector)
     return mat, y
 end
 
-function solveLinearUTM(utm::Matrix, y::Vector)
+function solve_linear_UTM(utm::Matrix, y::Vector)
     utm_size = size(utm, 1)
 
     res = zeros(utm_size)
@@ -117,6 +117,6 @@ display(U)
 
 display(y)
 
-x = solveLinearUTM(U, y)
+x = solve_linear_UTM(U, y)
 
 display(x)
