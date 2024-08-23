@@ -48,20 +48,18 @@ function LUFactorization(A::Matrix)
     return L, U, P, v
 end
 
-A1 = Matrix{Float64}([
+A = Matrix{Float64}([
         -1 1 3;
         2 0 1;
         -3 -1 2
     ])
 
-b1 = Vector([0; 0; 0])
+b = Vector([-1.; 0.; -2.])
 
-L = Matrix(I, size(A1))
-
-L, U, P, v = LUFactorization(A1)
+L, U, P, v = LUFactorization(A)
 
 println("Original Matrix : ")
-display(A1)
+display(A)
 
 println("Lower Triangular Matrix : ")
 display(L)
@@ -74,9 +72,6 @@ display(P)
 
 println("Permutation Vector : ")
 display(v)
-
-# println("A = transpose(P)*L*U : ")
-# display(transpose(P) * L * U)
 
 #=
     Solving Ax = b with GEPP
@@ -93,3 +88,56 @@ display(v)
 
         Ax = (transpose(P)LU)x = transpose(P)L(Ux) = transpose(P)(Lw) = transpose(Pp)b^
 =#
+
+# Factor A = transpose(P) * L * U by GEPP
+# L, U, P, _ = LUFactorization(A)
+
+# Set b^ = P * b
+b_hat = P * b
+
+println("Vector b_hat : ")
+display(b_hat)
+
+# Solve L * w = b^
+function solveLinearEquationLTM(L::Matrix, b_hat::Vector)
+    n = size(L, 1)
+
+    res = zeros(n)
+
+    for i in 1:n
+        res[i] += b_hat[i] / L[i, i]
+
+        for j in i+1:n
+            b_hat[j] -= L[j, i] * res[i]    
+        end
+    end
+
+    return res
+end
+
+w = solveLinearEquationLTM(L, b_hat)
+
+println("Vector w : ")
+display(w)
+
+# Solve U * x = w for x (backward substitution)
+function solveLinearEquationUTM(U::Matrix, w::Vector)
+    n = size(U, 1)
+
+    res = zeros(n)
+
+    for i in n:-1:1
+        res[i] += w[i] / U[i, i]
+
+        for j in 1:i-1
+            w[j] -= U[j, i] * res[i]   
+        end
+    end
+
+    return res
+end
+
+x = solveLinearEquationUTM(U, w)
+
+println("Vector x : ")
+display(x)
