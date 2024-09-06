@@ -1,6 +1,11 @@
+# Gaussian Elimination with Partial Pivoting (GEPP)
 
+#=
+    GEPP allows for the extraction of LU factorization 
+    by swapping the current row with the row containing 
+    the highest value before performing Gaussian Elimination.
+=#
 using LinearAlgebra
-
 
 function swap_row(pivot::Int, curr::Int, mat::Matrix) 
     pivotRow = mat[pivot, :]
@@ -92,7 +97,7 @@ println("Vector b_hat : ")
 display(b_hat)
 
 # Solve L * w = b^
-function solve_linear_equation_LTM(L::Matrix, b_hat::Vector)
+    function solve_linear_equation_LTM(L::Matrix, b_hat::Vector)
     n = size(L, 1)
 
     res = zeros(n)
