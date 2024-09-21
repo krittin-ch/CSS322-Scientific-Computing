@@ -1,7 +1,7 @@
 # LU Factorization or LU Decomposition
 
 #=
-    Lower Triangular Matrix L :
+    Lower Triangular Matrix L:
         - 0 for entries above diagonal
         - 1 for entries on diagonal
         - For entries below digonal, put the multiplier used to zero out the entry a_ij on l_ij
@@ -46,37 +46,37 @@ A = convert(
 
 L, U = LU_factorization(A)
 
-println("The Lower Triangular Matrix L :")
+println("The Lower Triangular Matrix L:")
 display(L)
 
-println("The Upper Triangular Matrix L :")
+println("The Upper Triangular Matrix L:")
 display(U)
 
-# println("A = L * U : ")
+# println("A = L * U: ")
 # display(L*U)
 
 #=
     With LU Factorization, Ax = b can be solved without needing b from the start.
 
-    Procedure for solving Ax = b :
+    Procedure for solving Ax = b:
         1. Factor A = LU
         2. Solve Lw = b for w (forward substitution)
         3. Solve Ux = w for x (backward substitution)
 
-    Verify :
+    Verify:
         Let x be the output of the above procedure
         
         Ax = (LU)x = L(Ux) = Lw = b
 
-    Advantages :
+    Advantages:
             If there are many linear equations to be solved with the same matrix A, 
             then only LU factor is required making the time complexity bounded to O(n^3)
 
-            LU Factorization : O(n^3)
-            Forward Substitution (sovle Lw = b for w) : O(n^2)
-            Backward Substitution (sovle Ux = w for x) : O(n^2)
+            LU Factorization: O(n^3)
+            Forward Substitution (sovle Lw = b for w): O(n^2)
+            Backward Substitution (sovle Ux = w for x): O(n^2)
 
-            Total Time Complexity : O(n^3) + O(n^2) + O(n^2) = O(n^3)
+            Total Time Complexity: O(n^3) + O(n^2) + O(n^2) = O(n^3)
 =#
 
 using Base.Threads
@@ -137,20 +137,20 @@ b = convert(
 
 L, U = LU_factorization(A)
 
-println("The Lower Triangular Matrix L :")
+println("The Lower Triangular Matrix L:")
 display(L)
 
-println("The Upper Triangular Matrix L :")
+println("The Upper Triangular Matrix L:")
 display(U)
 println()
 
 w = solve_linear_equation_LTM(L, b)
 
-println("w (Lw = b) : ")
+println("w (Lw = b): ")
 display(w)
 println()
 
 x = solve_linear_equation_UTM(U, w)
 
-println("x (Ux = w) : ")
+println("x (Ux = w): ")
 display(x)
