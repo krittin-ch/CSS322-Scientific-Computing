@@ -3,8 +3,7 @@
 #=
     If A is a m × n matrix
 
-    Frobenius Norm :
-
+    Frobenius Norm:
         ||A||_F = sqrt(Σ_i=1_m {Σ_j=1_n {a_ij^2}})
         
 =#
@@ -26,6 +25,6 @@ function inf_norm(A::Matrix)
     return max(sum(abs.(A), dims=2)...)
 end
 
-println("Frobenius norm of matrix A : ", Frobenius_norm(A))
-println("1-norm of matrix A : ", one_norm(A))
-println("∞-norm of matrix A : ", inf_norm(A))
+println("Frobenius norm of matrix A: ", Frobenius_norm(A))
+println("1-norm of matrix A: ", one_norm(A))
+println("∞-norm of matrix A: ", inf_norm(A))
