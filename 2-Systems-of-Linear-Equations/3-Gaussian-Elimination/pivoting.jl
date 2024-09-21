@@ -2,12 +2,12 @@
 
     The Gaussian Elimination with Partial Pivoting (GEPP)
 
-    Pivot :
+    Pivot:
         Before each elimination step, exchange rows of matrix so that 
         the element with the max absolute value in the pivot column, 
         among uneliminated entries, is brought to the pivot position.
 
-    Example :
+    Example:
 
         A = Matrix([
             2 4 5;
@@ -17,7 +17,7 @@
 
         b = Vector([3; -1; -5])
 
-        For the first column, abs(3) is the maximum (among |2|, |1|, |3|) so swap Row 1 and 3 :
+        For the first column, abs(3) is the maximum (among |2|, |1|, |3|) so swap Row 1 and 3:
 
         A = Matrix([
             3 -2 1;
@@ -113,10 +113,12 @@ end
 
 U, y = GEPP(A, b)
 
+println("New Matrix A after GEPP:")
 display(U)
 
+println("New Vector b after GEPP:")
 display(y)
 
 x = solve_linear_UTM(U, y)
-
+println("The linear equation results:")
 display(x)
