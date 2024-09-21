@@ -1,5 +1,5 @@
 #=
-    Gaussian Elimination (GE) Concepts :
+    Gaussian Elimination (GE) Concepts:
         Gaussian Elimination processes the input square matrix and returns as the trianglur matrix
 
         A = Matrix([
@@ -124,21 +124,21 @@ function solve_linear_equation_LTM(ltm, b)
     return res
 end
 
-println("The upper triangular matrix of matrix A : ")
+println("The upper triangular matrix of matrix A: ")
 U, b_u = Gaussian_elimination_UTM(A, b)
 display(U)
 
 x1 = solve_linear_equation_UTM(U, b_u)
-println("The linear equation results : ")
+println("The linear equation results: ")
 display(x1)
 println()
 
-println("The lower triangular matrix of matrix A : ")
+println("The lower triangular matrix of matrix A: ")
 L, b_l = Gaussian_elimination_LTM(A, b)
 display(L)
 
 x2 = solve_linear_equation_LTM(L, b_l)
-println("The linear equation results : ")
+println("The linear equation results: ")
 display(x2)
 println()
 
@@ -151,5 +151,5 @@ function solve_linear_equation(A, b)
 end
 
 res = solve_linear_equation(A, b)
-println("The linear equation results : ")
+println("The linear equation results: ")
 display(res)
