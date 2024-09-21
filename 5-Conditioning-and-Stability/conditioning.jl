@@ -44,8 +44,11 @@ eps = 1e-5
 val_3 = cos(x2)
 val_4 = cos(x2 + eps)
 
-println("Absolute Error of the Input : ", absolute_error(x2, x2 + eps))
-println("Relative Error of the Input : ", relative_error(x2, x2 + eps))
+println("Exact Value: ", val_3)
+println("Approximated Value: ", val_4)
 
-println("Absolute Error of the Output : ", absolute_error(val_3, val_4))
-println("Relative Error of the Output : ", relative_error(val_3, val_4))
+println("Absolute Error of the Input: ", absolute_error(x2, x2 + eps))
+println("Relative Error of the Input: ", relative_error(x2, x2 + eps))
+
+println("Absolute Error of the Output: ", absolute_error(val_3, val_4))
+println("Relative Error of the Output: ", relative_error(val_3, val_4))
