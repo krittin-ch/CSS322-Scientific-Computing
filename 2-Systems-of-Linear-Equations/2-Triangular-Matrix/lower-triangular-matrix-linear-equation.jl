@@ -1,5 +1,5 @@
 #=
-    Linear Equation :
+    Linear Equation:
         a11*x1 + a12*x2 + ... + a1n*xn = b1
         a21*x1 + a22*x2 + ... + a2n*xn = b1
                                     .
@@ -71,7 +71,7 @@ println()
 # Inverse Matrix Method
 x = inv(L)*b
 
-println("Solution of the Inverse Matrix Method : ")
+println("Solution of the Inverse Matrix Method: ")
 display(x)
 println()
 
@@ -102,7 +102,7 @@ for i in 1:L_size[1]
     x1[i] = b1[i]/L1[i, i]
 end
 
-println("Solution of Version I : ")
+println("Solution of Version I: ")
 display(x1)
 println()
 
@@ -115,7 +115,7 @@ L2 = deepcopy(L)
 b2 = deepcopy(b)
 
 #=
-    Normal Code :
+    Normal Code:
 
         for j in 1:L_size[1]
             if L2[j, j] == 0 # Matrix is singular
@@ -132,7 +132,7 @@ b2 = deepcopy(b)
 =#
 
 #=
-    Parallel Processing with `@threads` :
+    Parallel Processing with `@threads`:
         Wrap the outer loop with the `@threads` macro, which tells Julia to execute the loop in parallel using multiple threads.
 
         Inside the loop, the `@sync` macro is called to ensure that the inner loop is executed synchronously,
@@ -146,11 +146,11 @@ using Base.Threads
 
 # Check the number of threads
 num_threads = nthreads()
-println("The number of threads : $num_threads")
+println("The number of threads: $num_threads")
 
 # The master thread
 master_thread = threadid()
-println("The id of master thread : $master_thread")
+println("The id of master thread: $master_thread")
 println()
 
 @threads for j in 1:L_size[1]
@@ -167,7 +167,7 @@ println()
 end
 
 #=
-    Distributed Computing Code :
+    Distributed Computing Code:
 
         # `@distributed` module to parallelize the code using multiple processes instead of threads
 
@@ -199,5 +199,5 @@ end
         end
 =#
 
-println("Solution of Version II : ")
+println("Solution of Version II: ")
 display(x2)
