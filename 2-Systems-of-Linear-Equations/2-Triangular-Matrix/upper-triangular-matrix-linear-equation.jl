@@ -26,7 +26,7 @@ println("size of column vector b = $b_size")
 
 x = inv(U) * b
 
-# println("Solution of the Inverse Matrix Method : ")
+# println("Solution of the Inverse Matrix Method: ")
 # display(x)
 
 # Version I (for-loop)
@@ -49,7 +49,7 @@ for i in U_size[1]:-1:1
     x1[i] = b1[i]/U1[i, i]
 end
 
-# println("Solution of Version I : ")
+# println("Solution of Version I: ")
 # display(x1)
 
 # Version II (for-loop concerrently)
@@ -57,7 +57,7 @@ end
 using Base.Threads
 
 num_threads = nthreads()
-println("The number of threads : $num_threads")
+println("The number of threads: $num_threads")
 
 U2 = deepcopy(U)
 b2 = deepcopy(b)
@@ -76,7 +76,7 @@ x2 = zeros(U_size[1])
     end
 end
 
-println("Solution of Version II : ")
+println("Solution of Version II: ")
 display(x2)
 
 
