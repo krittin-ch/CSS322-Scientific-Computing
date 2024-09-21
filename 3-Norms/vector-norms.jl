@@ -13,18 +13,18 @@
 
             which is known as "Triangular Inequality."
 
-    2-Norm :
+    2-Norm:
         ||x||_2 = sqrt(Σ_i=1_n of (x_i)^2) = sqrt(x^T * x)
 
         Also known as "Euclidean norm"
         
-    1-Norm :    
+    1-Norm:    
         ||x||_1 = Σ_i=1_n of |x_i|
 
-    ∞-norm :
+    ∞-norm:
         ||x||_∞ = max_i=1_n {|x_i|}
 
-    p_norm :
+    p_norm:
         ||x||_p = (|x_1|^p + |x_2|^p + |x_3|^p + . . . + |x_n|^p)^1/p
 
         The 1-, 2- and ∞-norms are actually p-norms
@@ -55,9 +55,9 @@ end
 
 v = Vector{Float64}([1; -2; 0; 4])
 
-println("1-norm of vector v : ", one_norm(v))
-println("2-norm of vector v : ", two_norm(v))
-println("∞-norm of vector v : ", inf_norm(v))
+println("1-norm of vector v: ", one_norm(v))
+println("2-norm of vector v: ", two_norm(v))
+println("∞-norm of vector v: ", inf_norm(v))
 
 p = 8
-println("p-norm (p = $p) of vector v : ", p_norm(v, p))
+println("p-norm (p = $p) of vector v: ", p_norm(v, p))
