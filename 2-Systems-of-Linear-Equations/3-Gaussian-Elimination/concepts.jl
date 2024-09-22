@@ -1,6 +1,6 @@
 #=
     Gaussian Elimination (GE) Concepts:
-        Gaussian Elimination processes the input square matrix and returns as the trianglur matrix
+        Gaussian Elimination processes the input square matrix and returns as the triangular matrix
 
         A = Matrix([
             1 2 1;
