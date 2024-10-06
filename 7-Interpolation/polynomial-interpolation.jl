@@ -167,15 +167,55 @@ A = construct_Vandermonde_matrix(v)
 
 x = solve_linear_equation(A, y)
 
-# println("Polynomial interpolation of 3 points")
-# println("Output coefficients:")
-# display(x)
-
 y_test = output_polynomial(v_test, x)
-
-display(x)
 
 scatter(v, y, label="Training Data", legend=:topright)
 scatter!(v_test, y_test, label="Test Data")
+plot!(p, p.^4, label=nothing)
 
-savefig("output.png")
+path = "7-Interpolation/"
+
+savefig(path * "output_polynomial.png")
+
+
+points = Matrix{Float64}([
+    -5 -12;
+    -4 9;
+    -3 -5;
+    -2 7;
+    0 -1;
+    1 4;
+    2 -2;
+    3 10;
+    4 -3;
+    5 11
+])
+
+t = points[:, 1]
+y = points[:, 2]
+
+A = construct_Vandermonde_matrix(t)
+x = solve_linear_equation(A, y)
+
+function extract_interpolated_function(range::Vector, x::Vector)
+    n = size(range, 1)
+    m = size(x, 1)
+    res = zeros(n)
+
+    for i in m:-1:2
+        res .+= x[i]
+        res .*= range
+    end
+
+    res .+= x[1]
+
+    return res
+end
+
+range = collect(-5:0.1:5)
+pred = extract_interpolated_function(range, x)
+
+scatter(t, y, label=nothing)
+plot!(range, pred, label=nothing)
+
+savefig(path * "output_monobial_basis.png")
