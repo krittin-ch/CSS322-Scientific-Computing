@@ -23,4 +23,47 @@
     where Q is an m-by-m orthogonal matrix and R is an m-by-n upper triangular matrix.
 
     Theorem: If an m-by-n matrix A has rank n and A = QR is the QR factorization of A, R has rank n and R_1 is nonsigular
+
+    Three main algorithms to solve QR factorization:
+        1. Householder Transformation
+        2. Givens Rotations
+        3. Gram-Schmidt Algorithm
 =#
+
+import Pkg; Pkg.add("LinearSolve")
+using LinearSolve
+
+A = Matrix{Float64}([
+    1 2;
+    0 -2.4;
+    0 1.8
+])
+
+m, n = size(A)
+
+b = Vector{Float64}([-1; 0; 1])
+
+# Assume Q and R are already factorized
+
+Q = Matrix{Float64}([
+    1 0 0;
+    0 .8 .6;
+    0 -.6 .8
+])
+
+R = Matrix{Float64}([
+    1 2;
+    0 -3;
+    0 0
+])
+
+# Let c = Q^T * b
+c = transpose(Q) * b
+c_1 = c[1:n]    # since A is 3-by-2
+
+# Solve R_1 * x = c_1 
+R_1 = R[1:n]
+prob_1 = LinearProblem(R_1, c_1)
+x_1 = solve(prob_1).u
+
+display(x_1)
