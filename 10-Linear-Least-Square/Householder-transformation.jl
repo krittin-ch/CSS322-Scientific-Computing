@@ -44,14 +44,22 @@
 using LinearAlgebra
 using LinearSolve
 
+# A = Matrix{Float64}([
+#     1 5 3;
+#     2 -1 3;
+#     -2 2 1;
+#     2 0 3
+# ])
+
+# b = Vector{Float64}([2; 0; 1; 0])
+
 A = Matrix{Float64}([
-    1 5 3;
-    2 -1 3;
-    -2 2 1;
-    2 0 3
+    1 -1;
+    0 0;
+    1 1
 ])
 
-b = Vector{Float64}([2; 0; 1; 0])
+b = Vector{Float64}([2; -1; 2])
 
 function Householder_multiplication(v, u)
     return u - 2 * (transpose(v) * u) / (transpose(v) * v) * v
@@ -61,13 +69,13 @@ function Householder_transformation(A, b)
     m, n = size(A)
     a = A[:, 1]
 
-    alpha = a[1] > 0 ? -norm(a, 2) : norm(a, 2)
+    alpha = a[1] >= 0 ? -norm(a, 2) : norm(a, 2)
 
     e_1 = zeros(size(a))
     e_1[1] = 1
 
     v = a - alpha * e_1
-
+    
     A[:, 1] .= 0
     A[1, 1] = alpha
     
@@ -75,7 +83,10 @@ function Householder_transformation(A, b)
         A[:, i] = Householder_multiplication(v, A[:, i])
     end
 
+    display(b)
     b = Householder_multiplication(v, b)
+    display(b)
+
 
     return A, b
 end
@@ -86,8 +97,15 @@ function QR_factorization(A, b)
     A, b = Householder_transformation(A, b)
 
     if m >= 2 && n >=2 
+        # display(A)
+        # display(b)
+        # println()
         A[2:end, 2:end], b[2:end] = QR_factorization(A[2:end, 2:end], b[2:end])
     end
+
+    # display(A)
+    # display(b)
+    # println()
 
     return A, b
 end
