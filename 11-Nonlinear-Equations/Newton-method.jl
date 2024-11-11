@@ -39,6 +39,7 @@ function forward_difference(f::Function, x)
     return diff
 end
 
+
 function Newton_method(f::Function, init_guess)
     err = 0.01
 
