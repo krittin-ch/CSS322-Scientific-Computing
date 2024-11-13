@@ -101,16 +101,26 @@ function obtain_R_and_c(A, b)
     return R, c
 end
 
+# A = Matrix{Float64}([
+#     1 0 0;
+#     0 1 0;
+#     0 0 1;
+#     -1 1 0;
+#     -1 0 1;
+#     0 -1 1;
+# ])
+
+# b = Vector{Float64}([1237; 1941; 2417; 711; 1177; 475])
+
+
 A = Matrix{Float64}([
-    1 0 0;
-    0 1 0;
-    0 0 1;
-    -1 1 0;
-    -1 0 1;
-    0 -1 1;
+    2 -1 0;
+    0 4 2;
+    0 0 -1;
+    0 2 1
 ])
 
-b = Vector{Float64}([1237; 1941; 2417; 711; 1177; 475])
+b = Vector{Float64}([10; 4; 7; 5])
 
 R, c = obtain_R_and_c(A, b)
 
