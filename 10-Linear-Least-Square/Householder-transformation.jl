@@ -83,10 +83,7 @@ function Householder_transformation(A, b)
         A[:, i] = Householder_multiplication(v, A[:, i])
     end
 
-    display(b)
     b = Householder_multiplication(v, b)
-    display(b)
-
 
     return A, b
 end
@@ -97,15 +94,8 @@ function QR_factorization(A, b)
     A, b = Householder_transformation(A, b)
 
     if m >= 2 && n >=2 
-        # display(A)
-        # display(b)
-        # println()
         A[2:end, 2:end], b[2:end] = QR_factorization(A[2:end, 2:end], b[2:end])
     end
-
-    # display(A)
-    # display(b)
-    # println()
 
     return A, b
 end
