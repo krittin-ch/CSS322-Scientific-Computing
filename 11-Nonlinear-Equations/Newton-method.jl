@@ -30,7 +30,7 @@
         or if it does, it does so very slowly (linear convergence at best).
 =#
 
-f(x) = x^2 - 3*x - 4
+f(x) = log(x) - (8 - x^2)
 
 function forward_difference(f::Function, x)
     h = 0.001
@@ -46,9 +46,13 @@ function Newton_method(f::Function, init_guess)
     x = init_guess
     h = 1
 
+    println("x_0 = ", x, "f_0 = ", f(x))
+
     while h > err
         h = f(x) / forward_difference(f, x)
         x -= h
+        println("x = ", x, " f(x) = ", f(x))
+        println()
     end
 
     return x
