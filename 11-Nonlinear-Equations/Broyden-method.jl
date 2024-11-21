@@ -20,24 +20,26 @@
 
 using LinearAlgebra
 
-function sys_nonlinear(x_1, x_2)
+function sys_nonlinear(x_1, x_2, x_3)
     vec = Vector{Float64}([
-        x_1+2*x_2-2;
-        x_1^2+4*x_2^2-4;
+        x_1 + x_2^2 + 2*x_3;
+        x_1*x_3 - 3*x_2;
+        2*x_2*x_3^2 + 1
     ])
 
     return vec
 end
 
-function create_Jacobian(x_1, x_2)
+function create_Jacobian(x_1, x_2, x_3)
     h = 0.001
 
-    n = sys_nonlinear(x_1, x_2)
+    n = sys_nonlinear(x_1, x_2, x_3)
 
-    d_1 = sys_nonlinear(x_1+h, x_2) - n
-    d_2 = sys_nonlinear(x_1, x_2+h) - n
+    d_1 = sys_nonlinear(x_1+h, x_2, x_3) - n
+    d_2 = sys_nonlinear(x_1, x_2+h, x_3) - n
+    d_3 = sys_nonlinear(x_1, x_2, x_3+h) - n
 
-    J = [d_1 d_2] ./ h
+    J = [d_1 d_2 d_3] ./ h
 
     return J
 end
@@ -114,8 +116,8 @@ function solve_linear_equation(A::Matrix, b::Vector)
     return x
 end
 
-function Broyden_method_1_loop(x_1, x_2, J)
-    curr = sys_nonlinear(x_1, x_2)
+function Broyden_method_1_loop(x_1, x_2, x_3, J)
+    curr = sys_nonlinear(x_1, x_2, x_3)
 
     A = - transpose(J) * J
     b = transpose(J) * curr
@@ -132,32 +134,49 @@ function update_Jacobian(J::Matrix, y::Vector, h::Vector)
     return J + b./a
 end
 
-function solve_nonlinear_equation(x_1, x_2)
+function solve_nonlinear_equation(x_1, x_2, x_3)
     err = 0.01
     h = 1
 
     y_k = 0
-    J = create_Jacobian(x_1, x_2)
+    # J = create_Jacobian(x_1, x_2, x_3)
 
-    while abs.(sum(h)) > err
-        h = Broyden_method_1_loop(x_1, x_2, J)
+    J = Matrix{Float64}(I, 3, 3)
 
-        # println("h = ", h)
+    k = 0
 
-        curr = sys_nonlinear(x_1, x_2)
+    while k != 5
+        h = Broyden_method_1_loop(x_1, x_2, x_3, J)
+
+        println("J = ")
+        display(J)
+
+        println("x_1 = ", x_1)
+        println("x_2 = ", x_2)
+        println("x_3 = ", x_3)
+
+        println()
+
+        curr = sys_nonlinear(x_1, x_2, x_3)
         x_1 += h[1]
         x_2 += h[2]
+        x_3 += h[3]
         
-        next = sys_nonlinear(x_1, x_2)
+        next = sys_nonlinear(x_1, x_2, x_3)
         y_k = next - curr
 
         J = update_Jacobian(J, y_k, h)
+
+        k += 1
     end
 
-    return x_1, x_2
+    return x_1, x_2, x_3
 end
 
-x_1, x_2 = solve_nonlinear_equation(1, 2)
+x_1, x_2, x_3 = solve_nonlinear_equation(1, -2, 1)
 
 println("x_1 = ", x_1)
 println("x_2 = ", x_2)
+println("x_3 = ", x_3)
+
+println(sys_nonlinear(1, -2, 1))
