@@ -22,7 +22,7 @@
         3. Converges a bit more slowly (superlinearly)
 =#
 
-f(x) = x^2 - 3*x - 4
+f(x) = log10(x) - (8 - x^2)
 
 function inv_difference(y_1, x_1, y_0, x_0)
     diff = (x_1 - x_0) / (y_1 - y_0)
@@ -31,7 +31,7 @@ function inv_difference(y_1, x_1, y_0, x_0)
 end
 
 function secant_method(f::Function, init_1, init_2)
-    err = 0.01
+    err = 0.0001
     
     x_1 = init_1
     x_2 = init_2
@@ -40,7 +40,10 @@ function secant_method(f::Function, init_1, init_2)
     f_k_1 = f(x_1)
     f_k_2 = f(x_2)
 
-    while h > err
+    println("x_0 = ", x_1, " f_0 = ", f_k_1)
+    println("x_1 = ", x_2, " f_1 = ", f_k_2)
+    
+    while abs(h) > err
         inv_diff = inv_difference(f_k_2, x_2, f_k_1, x_1)
         h = f_k_2 * inv_diff
         x_1 = x_2
@@ -48,12 +51,17 @@ function secant_method(f::Function, init_1, init_2)
 
         f_k_1 = f_k_2
         f_k_2 = f(x_2)
+    
+        println("x = ", x_2, " f(x) = ", f_k_2)
+        println()
     end
 
     return x_2
 end
 
-x = secant_method(f, 5, 4.1429)
+x = secant_method(f, 5, 4)
 
 println("root x: ", x)
 println("f(x = ", x, "): ", f(x))
+
+println(f(5))
