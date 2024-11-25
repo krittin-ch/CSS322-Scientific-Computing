@@ -20,33 +20,27 @@ function construct_equation(t, y, next_y, h)
     return y + h*f(t, y) - next_y
 end
 
-function inv_difference(y_1, x_1, y_0, x_0)
-    diff = (x_1 - x_0) / (y_1 - y_0)
+function forward_difference(f::Function, x)
+    h = 0.001
+    diff = (f(x + h) - f(x)) / h
 
     return diff
 end
 
-function secant_method(f::Function, y, h, init_1, init_2)
+function Newton_method(f::Function, t, y, init_next_y, h)
     err = 0.01
-    
-    x_1 = init_1
-    x_2 = init_2
-    E = 1
 
-    f_k_1 = f(t, y, x_1, h)
-    f_k_2 = f(t, y, x_2, h)
+    x = init_next_y
+    h = 1
 
-    while E > err
-        inv_diff = inv_difference(f_k_2, x_2, f_k_1, x_1)
-        E= f_k_2 * inv_diff
-        x_1 = x_2
-        x_2 -= E
+    f(next_y) = construct_equation(t, y, next_y, h)
 
-        f_k_1 = f_k_2
-        f_k_2 = f(t, y, x_2, h)
+    while h > err
+        h = f(x) / forward_difference(f, x)
+        x -= h
     end
 
-    return x_2
+    return x
 end
 
 function RK(f::Function, h, y_0, n)
@@ -56,8 +50,8 @@ function RK(f::Function, h, y_0, n)
     res[1] = y_0
 
     for i in 2:n
-        x = secant_method(construct_equation(f, res[i - 1], 1, 2))
-        res[i] = y + h*f(t, y)
+        new_y = Newton_method(construct_equation, 1)
+        res[i] = new_y
         t += h
     end
 
