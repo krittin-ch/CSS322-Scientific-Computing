@@ -17,8 +17,12 @@
 
 f(x) = 0.5 - x*exp(-x^2)
 
+# function new_mid_point(f::Function, u, v, w)
+#     return 1/2 * ( (f(w) - f(v))*(v^2 - u^2) + (f(u) - f(v))*(w^2 - v^2) ) / ( (f(w) - f(v))*(v - u) + (f(u) - f(v))*(w - v) ) 
+# end
+
 function new_mid_point(f::Function, u, v, w)
-    return 1/2 * ( (f(w) - f(v))*(v^2 - u^2) + (f(u) - f(v))*(w^2 - v^2) ) / ( (f(w) - f(v))*(v - u) + (f(u) - f(v))*(w - v) ) 
+    return  v - 1/2 * ( (v - u)^2 * (f(v) - f(w)) - (v - w)^2 * (f(v) - f(u)) ) / ( (v - u) * (f(v) - f(w)) - (v - w) * (f(v) - f(u)) ) 
 end
 
 function successive_parabolic_interpolation(f::Function, u, v, w)
@@ -31,10 +35,10 @@ function successive_parabolic_interpolation(f::Function, u, v, w)
         u = w
         w = v
         v = x
-        curr = f(v)
+        # curr = f(v)
         # h = curr - prev
-        h -= 0.1
-        println(v)
+        h -= 0.2
+        println("Middle Point: ", round(v, digits=6))
     end
 
     return v
