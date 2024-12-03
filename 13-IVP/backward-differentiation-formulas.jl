@@ -16,8 +16,8 @@ function f(t, y)
     return t/y
 end
 
-function construct_equation(t, y, next_y, h)
-    return y + h*f(t, y) - next_y
+function construct_equation(f::Function, t, y, next_y, h)
+    return y + h*f(t, next_y) - next_y
 end
 
 function forward_difference(f::Function, x)
@@ -28,20 +28,21 @@ function forward_difference(f::Function, x)
 end
 
 function Newton_method(f::Function, t, y, init_next_y, h)
-    err = 0.01
+    err = 0.001
 
     x = init_next_y
-    h = 1
+    E = 1
 
-    f(next_y) = construct_equation(t, y, next_y, h)
-
-    while h > err
-        h = f(x) / forward_difference(f, x)
-        x -= h
+    while abs(E) > err
+        eq_value = construct_equation(f, t, y, x, h)
+        derivative = forward_difference(x_val -> construct_equation(f, t, y, x_val, h), x)
+        E = eq_value / derivative
+        x -= E
     end
 
-    return x
+    return x 
 end
+
 
 function RK(f::Function, h, y_0, n)
     res = zeros(n)
@@ -50,14 +51,15 @@ function RK(f::Function, h, y_0, n)
     res[1] = y_0
 
     for i in 2:n
-        new_y = Newton_method(construct_equation, 1)
-        res[i] = new_y
         t += h
+        new_y = Newton_method(f, t, res[i-1], 1, h)
+        res[i] = new_y
     end
 
     return res
 end
 
-x = RK(f, 0.5, 1, 10)
+x = RK(f::Function, 0.5, 1, 10)
 
 display(x)
+
