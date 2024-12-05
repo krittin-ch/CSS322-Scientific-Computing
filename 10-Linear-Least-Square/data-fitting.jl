@@ -114,13 +114,19 @@ function normal_equation(A::Matrix, b::Vector)
 end
 
 A = Matrix{Float64}([
-    0 1;
     1 1;
-    2 1;
-    3 1
+    3 3;
+    5 55
 ])
 
-b = Vector{Float64}([1; -1; 4; 2])
+b = Vector{Float64}([2; 4; 3])
 
 x = normal_equation(A, b)
 
+display(x)
+
+using LinearAlgebra
+
+y = [x; 1]
+
+display(normalize(y))
