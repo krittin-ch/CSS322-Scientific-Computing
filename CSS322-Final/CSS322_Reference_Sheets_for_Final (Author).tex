@@ -1,0 +1,1527 @@
+\documentclass[9pt]{article}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{lipsum}  
+\usepackage{graphicx}
+\usepackage{listings} % For code formatting
+\usepackage{amssymb}
+\usepackage{dashrule} 
+\usepackage{arydshln}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{mathdots}
+\usepackage{setspace}
+
+% Set page geometry
+\geometry{a4paper, margin=0.25in}
+
+\usepackage{titlesec}
+\titleformat{\section}{\normalsize\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\small\bfseries}{\thesubsection}{1em}{}
+
+\setlength{\columnseprule}{0.5pt}
+
+\setlength{\parindent}{0pt}
+
+\begin{document}
+\footnotesize
+
+\begin{multicols}{3}
+
+\setcounter{section}{6}
+\section{Interpolation}
+
+% \vspace{-0.8cm}
+\subsection*{Monomial Basis}
+
+% \vspace{-1.2cm}
+\[
+    p_{n-1}(t) = \sum_{j=1}^n x_j \phi_j(t) \; ; \quad  \phi_j(t) = t^{j-1}
+\]
+
+% \vspace{-0.7cm}
+From data points: $(t_1, y_1), ..., (t_n, y_n)$
+
+% \vspace{-1.3cm}
+\[
+\begin{bmatrix}
+1 & t_1  & \cdots & t_1^{n-1} \\
+1 & t_2  & \cdots & t_2^{n-1} \\
+\vdots & \vdots & \ddots & \vdots & \\
+1 & t_n  & \cdots & t_n^{n-1} \\
+\end{bmatrix}
+\begin{bmatrix}
+    x_1\\
+    x_2\\
+    \vdots\\
+    x_n
+\end{bmatrix}
+=
+\begin{bmatrix}
+    y_1\\
+    y_2\\
+    \vdots\\
+    y_n
+\end{bmatrix}\\
+\]
+
+% \vspace{1.2cm}
+\textbf{Vandermonde Matrix} is non-singular (invertible) if the $t_i$'s are all distinct.
+
+\vspace{0.5cm}
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+
+% \vspace{-2.8cm}
+\subsection*{Horner's Method}
+
+% \vspace{-0.8cm}
+\textbf{Rewrite} $p_{n-1}(t) = x_1 + x_2t + ... x_nt^{n-1}$ \textbf{as} $p_{n-1}(t) = x_1 + t(x_2 + t(...(x_{n-1} + x_nt)...)))$
+\\
+
+% \vspace{-0.5cm}
+\noindent
+Both require $O(n)$ additions, but the first requires $O(n^2)$ multiplications, while the second requires only $O(n)$ multiplications.
+
+\vspace{0.5cm}
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+
+% \vspace{-2.8cm}
+\subsection*{Lagrange Interpolation}
+
+% \vspace{-0.8cm}
+Lagrange basis function (a.k.a. fundamental polynomials)
+
+% \vspace{-1.5cm}
+
+% \scalebox{0.9}{
+\begin{flalign*}
+l_j(t) &= \frac{\prod_{k=1, k\neq j}^n (t-t_k)}{\prod_{k=1, k\neq j}^n (t_j - t_k)} , \ j=1 \text{ to } n & \\
+\text{And,} \ \quad l_j(t_i) &= 
+\begin{cases} 
+1, & \text{if } i = j \\ 
+0, & \text{if } i \neq j 
+\end{cases} \ ; \ i,j = 1 \text{ to } n & \\
+\text{So,} \quad p_{n-1}(t) &= \sum_{j=1}^n x_j l_j(t) & \\
+x_i &= y_i \ ;z\quad \forall i &
+\end{flalign*}
+% }
+
+\vspace{0.3cm}
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+
+% \vspace{-3cm}
+\subsection*{Newton Interpolation}
+
+% \vspace{-1cm}
+% Any polynomial (degree $n-1$) can be written as
+
+% \vspace{-0.5cm}
+\[
+p_{n-1}(t) = \sum_{j=1}^n x_j \pi_j(t),
+\]
+where Newton basis functions
+\[
+\pi_j(t) = \prod_{k=1}^{j-1} (t - t_k).
+\]
+\begin{flalign*}
+\text{Solve} \quad 
+A \begin{bmatrix}
+    x_1 \\ \vdots \\ x_n
+\end{bmatrix} =
+\begin{bmatrix}
+    y_1 \\ \vdots \\ y_n
+\end{bmatrix}. & &
+\end{flalign*}
+
+where $A$ is
+\[
+\scalebox{0.80}{$ 
+\begin{bmatrix}
+    1 & 0 & 0 & \cdots  & 0\\
+    1 & (t_2-t_1) & 0 & \cdots & 0\\
+    1 & (t_2-t_1) & (t_3-t_1)(t_3-t_2) & \cdots & 0\\
+    \vdots & \vdots & \vdots & \ddots & \vdots\\
+    1 & (t_n-t_1) & (t_n-t_1)(t_n-t_2) & \cdots & \prod_{j=1}^{n-1}(t_n - t_j)
+\end{bmatrix}
+$}
+\]\\
+
+\textbf{Theorem} If $f$ is a sufficiently smooth function and $p_{n-1}$ i the polynomial of degree at most $n-1$ that interpolates $f$ at $n$ points $t_1$ to $t_n$ (where $t_1 < t_2 < \cdots < t_n$, then
+\[
+\max\limits_{t \in \{t_1, t_n\}} \lvert f(t) - p_{n-1}(t) \rvert \leq \frac{Mh^n}{4n} \, ,
+\]
+where $\lvert f^{(n)}(t) \rvert \leq M \, ;  \ \forall t \in [t_1, t_n]$ and $h = \max\{ t_{i+1}-t_i : i = 1 \text{ to } n-1\}$
+% \\
+
+\columnbreak
+% \hrule
+% \vspace{-0.35cm}
+\section{Numerical Integration}
+\subsection*{n-Points Quadrature Rules}
+
+\vspace{-0.3cm}
+\begin{flalign*}
+\textbf{Problem: } \text{Compute} \quad I(f) = \int_a^b f(x) \ dx &&
+\end{flalign*}
+
+\vspace{-0.3cm}
+\begin{flalign*}
+\text{Approximate $I(f)$ by} \quad Q_n(f) = \sum_{i=1}^n w_i f(x_i) \, , &&
+\end{flalign*}
+
+where $a \leq x_1 < x_2 < \cdots < x_n \leq b.$\\
+
+if $a < x_1$ and $x_n < b$, a quadrature rule is \textbf{open}, else \textbf{closed}
+
+\vspace{-0.05cm}
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+\vspace{-0.75cm}
+\subsection*{Method of Undetermined Coefficients (Moment Equations)}
+Solve for $w_i$'s
+\[
+\scalebox{0.8}{$
+\begin{bmatrix}
+    1 & 1 & \cdots & 1\\
+    x_1 & x_2 & \cdots & x_n\\
+    \vdots & \vdots & \ddots & \vdots\\
+    x_1^{n-1} & x_2^{n-1} & \cdots & x_n^{n-1}
+\end{bmatrix}
+\begin{bmatrix}
+    w_1\\
+    w_2\\
+    \vdots\\
+    w_n
+\end{bmatrix}
+=
+\begin{bmatrix}
+    b-a\\
+    (b^2 - a^2)/2\\
+    \vdots\\
+    (b^n - a^n)/n
+\end{bmatrix}
+$}
+\]
+
+A quadrature rule is said to be of \textbf{degree} $d$ if it is exact (i.e., the error is zero) for every polynomial of degree $d$ or lower but is not exact for some polynomial of degree $d+1$.
+\\
+
+$n-$\textbf{point open Newton-Cotes rule} \[
+x_i = a + \frac{b-a}{n+1}i \, , \ i= 1 \text{ to } n \, .
+\]
+
+$n-$\textbf{point closed Newton-Cotes rule} 
+\[
+x_i = a + \frac{b-a}{n-1}(i-1) \, , \ i= 1 \text{ to } n \, .
+\]
+
+
+\textbf{Midpoint rule:} 1-point open Newton-Cotes.
+\[
+M(f) = (b-a)f\left(\frac{a+b}{2}\right) \, .
+\]
+
+
+\textbf{Trapezoid rule:} 2-point closed Newton-Cotes.
+\[
+T(f) = \frac{b-a}{2} (f(a) + f(b)) \, .
+\]
+
+\textbf{Simpson's rule:} 3-point closed Newton-Cotes.
+\[
+% \scalebox{1}{$
+S(f) = \frac{b-a}{6} \left( f(a) + 4f\left(\frac{a+b}{2}\right) + f(b) \right) \, .
+% $}
+\]
+
+\hdashrule{\linewidth}{0.5pt}{0.2mm 1mm}
+% \subsection*{Error}
+\[
+\begin{aligned}
+    \text{\textbf{Error}} \quad I(f) &= M(f) + E(f) + F(f) + \cdots \, ,\\
+    I(f) &= T(f) - 2E(f) - 4F(f) + \cdots \, ,\\
+    I(f) &= S(f) -\frac{2}{3}F(f) + \cdots \, ,\\
+    \text{where} \quad E(f) &= \frac{f''(m)}{24}(b-a)^3 \\
+    F(f) &= \frac{f^{(4)(m)}}{1920}(b-a)^5 \\
+    E(f) &\approx \frac{T(f) - M(f)}{3}
+\end{aligned}
+\]
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+\vspace{-0.8cm}
+\subsection*{Gaussian Quadrature}
+For each n, there is a unique $n$-point Gaussian quadrature rule, and it is of degree $2n-1$. \\
+Highest possible accuracy for $n$ nodes.
+
+\[
+G_n(f) = \sum_{i=1}^n w_i f(x_i)
+\]
+Solve $w_i$'s and $x_i$'s\\(The system of equations is nonlinear)
+\[
+\scalebox{0.8}{$
+\begin{bmatrix}
+    1 & 1 & \cdots & 1\\
+    x_1 & x_2 & \cdots & x_n\\
+    \vdots & \vdots & \ddots & \vdots\\
+    x_1^{2n-1} & x_2^{2n-1} & \cdots & x_n^{2n-1}
+\end{bmatrix}
+\begin{bmatrix}
+    w_1\\
+    w_2\\
+    \vdots\\
+    w_n
+\end{bmatrix}
+=
+\begin{bmatrix}
+    \int_a^b \ dx\\
+    \int_a^b x \ dx\\
+    \vdots\\
+    \int_a^b x^{2n-1} \ dx
+\end{bmatrix}
+$}
+\]
+
+\vspace{0.1cm}
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+\vspace{-0.7cm}
+\subsection*{Composite Rules}
+\textbf{The composite midpoint rule ($M_k(f)$):}
+\[
+M_k(f) \equiv h \sum_{j=1}^k f \left( \frac{x_{j-1}  + x_j}{2} \right)
+\]
+\textbf{The composite trapezoid rule ($T_k(f)$):}
+\[
+T_k(f) \equiv \frac{h}{2} \sum_{j=1}^k \left( f(x_{j-1}) + f(x_j) \right)
+\]
+
+\columnbreak
+% \hrule
+% \vspace{-0.35cm}
+\section{Numerical Differentiation}
+
+\begin{flalign*}
+&\textbf{Forward: }
+f'(x) \approx \frac{f(x+h) - f(x)}{h}\\
+&\textbf{Backward: }
+f'(x) \approx \frac{f(x) - f(x-h)}{h}\\
+&\textbf{Centered: }
+f'(x) \approx \frac{f(x+h) - f(x-h)}{2h}\\
+&\textbf{Centered: }
+f''(x) \approx \frac{f(x+h) - 2f(x) + f(x-h)}{h^2}
+\end{flalign*}
+
+\vspace{-0.1cm}
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+\vspace{-0.8cm}
+\subsection*{Richardson Extrapolation}
+
+\vspace{-0.2cm}
+\begin{flalign*}
+\text{Suppose} \qquad F(h) &= a_0 + a_1h^p + O(h^r) \, . &
+\end{flalign*}
+
+as $h \rightarrow 0$ for some $p$ and $r$, with $r > p$. Then
+\[
+a_0 = F(h) - \frac{F(h) - F(h/q)}{q^{-p} - 1} = \left. \frac{d}{dx} f(x) \right|_{\text{at }x \text{ and } h}
+\]
+\textbf{Example: } Improve 1$^{st}$-order forward derivative of $f(x).$
+\[
+F(h) = \frac{f(x + h) - f(x)}{h}
+\]
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+
+\vspace{-0.4cm}
+\subsection*{Automatic Differentiation: Forward Mode vs Reverse Mode}
+Suppose $f :\mathbb{R}^n \rightarrow \mathbb{R}^m$. Forward mode is faster when $m$ is much larger than $n$. Reverse mode is faster when $n$ is much larger than $m$. Reverse mode takes a lot more space (except for some special cases).\\
+\hrule
+
+\vspace{-0.35cm}
+\section{Linear Least Squares}
+
+\vspace{-0.35cm}
+\textbf{Example: } Fit a quadratic function through $n$ given data points $(t_i, y_i)$. \textbf{Unknown quadratic: } $y = \sum_{i=1}^{k} x_i f_i(t)$
+\[
+\scalebox{0.9}{$
+\begin{bmatrix}
+    f_1(t_1) & f_2(t_1) & \cdots & f_k(t_1)\\
+    f_1(t_2) & f_2(t_2) & \cdots & f_k(t_2)\\
+    \vdots & \vdots & \ddots & \vdots \\
+    f_1(t_n) & f_2(t_n) & \cdots & f_k(t_n)\\
+\end{bmatrix}
+\begin{bmatrix}
+    x_1\\
+    x_2\\
+    \vdots\\
+    x_k
+\end{bmatrix}
+=
+\begin{bmatrix}
+    y_1\\
+    y_2\\
+    \vdots\\
+    y_n
+\end{bmatrix}
+$}
+\]
+That is, $A_{n \times k}x_{k \times 1} = b_{n \times 1}$.\\
+\textbf{Minimize} $|| Ax - b ||_2$\\
+
+\textbf{Theorem}
+$x = (A^T A)^{-1} A^T b$ is the unique solution to the linear squares problem when $A$ has rank $n$.\\
+
+Since $A \in \mathbb{R}^{m \times n}$ has rank $n$. Then $A^TA$ is symmetric positive definite, and \textbf{Cholesky factorization} can be applied to solve $A^TAx = A^Tb$.
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+\vspace{-0.8cm}
+\subsection*{QR Factorization}
+Given $A \in \mathbb{R}^{m \times n}$, $m \geq n$. \(A = QR\)
+where $Q$ is a $m$-by-$n$ orthogonal matrix, R is an $m$-by-$n$ upper triangular matrix
+\[
+R = 
+\begin{bmatrix}
+    {R_1}_{n \times n}\\ 
+    \mathbf{0}_{m-n \times n}
+\end{bmatrix}
+\]
+\textbf{Minimize} $||Ax-b||_2 = ||QRx-b||_2$\\
+\textbf{Note: } $||Qx||_2 = ||x||_2$
+\begin{flalign*}
+\text{So, } \ ||Ax-b||_2 &= ||QRx - Qc||_2\\
+&= ||Rx-c||_2 \; ; \quad (||QA||_2 = ||A||_2)\\
+&= \left| \left| 
+\begin{bmatrix}
+    R_1\\
+    \mathbf{0}
+\end{bmatrix}
+x-
+\begin{bmatrix}
+    c_1\\
+    c_2
+\end{bmatrix}
+\right| \right|_2\\
+&= \sqrt{||R_1x - c_1||_2^2 + ||c_2||_2^2} &
+\end{flalign*}
+
+If $R_1$ is non-singular, $R_1x=c_1$ has a solution, and the solution $x$ \textbf{minimize} $||R_1x-c_1||_2$ and therefore minimizing $||Ax-b||_2$.\\
+
+\textbf{Theorem} Any $A \in \mathbb{R}^{m \times n}$ ($m > n$) can be factored $A = QR$ where $Q$ is an $m$-by-$m$ orthogonal matrix and $R$ is an $m$-by-$n$ triangular matrix.\\
+
+\columnbreak
+\textbf{Theorem} Any $A \in \mathbb{R}^{m \times n}$, $m \geq n$, has rank $n$ and $A = QR$ is the $QR$ factorization of $A$, then $R$ has rank $n$ and $R_1$ is non-singular.\\
+
+To find $x$ that minimizes $min_x||Ax-b||_2$:
+\begin{enumerate}
+    \item Factor $A=QR$
+    \item Compute $c = Q^Tb$
+    \item Solve $R_1x=c_1$ for $x$ by back substitution
+\end{enumerate}
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+\vspace{-0.65cm}
+\subsection*{Householder Transformation}
+\[H = I - 2\frac{vv^T}{v^Tv}\]
+is called a \textbf{Householder transformation}\\
+
+
+\textbf{Theorem} $H$ is symmetric and orthogonal.
+
+
+$a$ is  the first column of $A$, a Householder transform will be
+\[Ha = \left( I - 2\frac{vv^T}{v^Tv} \right)a =
+\begin{bmatrix}
+    \alpha\\
+    0\\
+    \vdots\\
+    0
+\end{bmatrix}
+= \alpha e_1
+\]
+Hence, $v := a - \alpha e_1$ and $\alpha = -\text{sign}(a_1)||a||_2$. (To avoid catastrophic cancellation)
+\[
+\text{So,} \quad
+v:= a - \alpha e_1 =
+\begin{bmatrix}
+    a_1\\
+    a_2\\
+    \vdots\\
+    a_m
+\end{bmatrix}-
+\begin{bmatrix}
+    \alpha\\
+    0\\
+    \vdots\\
+    0
+\end{bmatrix}
+=
+\begin{bmatrix}
+    a_1- \alpha\\
+    a_2\\
+    \vdots\\
+    a_m
+\end{bmatrix}
+\]
+\hdashrule{\linewidth}{0.5pt}{0.2mm 1mm}
+
+\vspace{0.1cm}
+\textbf{Example:}
+$A \in \mathbb{R}^{m \times n}$
+\[A=
+\begin{bmatrix}
+    a & B
+\end{bmatrix}\, 
+\]
+where $a \in  \mathbb{R}^m$ and $B \in \mathbb{R}^{m \times (n-1)}$.\\
+Set $v_1 = a - \alpha_1e_1$ and $H_1 = I - 2\frac{v_1v_1^T}{v_1^Tv_1}$
+\[
+\begin{alignedat}{2}
+    H_1A &=
+    H_1 
+    \begin{bmatrix}
+        a & B
+    \end{bmatrix}
+    &&= 
+    \begin{bmatrix}
+        H_1a & H_1B
+    \end{bmatrix} \\
+    &=
+    \begin{bmatrix}
+        \alpha_1 & \\
+        0 & H_1B \\
+        \vdots & \\
+        0 & 
+    \end{bmatrix}
+    &&= 
+    \begin{bmatrix}
+        \alpha_1 & w^T\\
+        \mathbf{0} & A_2
+    \end{bmatrix} \, ,
+\end{alignedat}
+\]
+
+Recursively do the same thing on the matrix $A_2$
+Let $a$ be the first column of $A_2$, set $v_2 := a - \alpha_2e_1$ where $\alpha_2 = -\text{sign}(a_1)||a||_2$, \\and choose $H_2' = I - 2\frac{v_2v_2^T}{v_2^Tv_2}$.
+
+\[
+\ H_2 =
+\begin{bmatrix}
+    1 & \mathbf{0}^T\\
+    \mathbf{0} & H_2'
+\end{bmatrix} \, , \text{ then}\ \ H_2H_1A = 
+\begin{bmatrix}
+    1 & \mathbf{0}^T\\
+    \mathbf{0} & H_2'A_2
+\end{bmatrix}
+\]
+
+\[
+\scalebox{0.83}{$
+= 
+\begin{bmatrix}
+    \alpha_1 & w^T\\
+    \mathbf{0} & H_2'A_2
+\end{bmatrix}
+=
+\left[
+\begin{array}{c|c:c}
+    \alpha_1 & w_1 & w(2:n)^T \\
+    \hline
+    0 & \alpha_2 & * \\
+    \hdashline
+    0 & 0 & * \\
+    \vdots & \vdots & \vdots \\
+    0 & 0 & * \\
+\end{array}
+\right]
+= 
+\begin{bmatrix}
+    R' & W\\
+    \mathbf{0} & A_3
+\end{bmatrix}
+$}
+\]
+where $R'$ is a 2-by-2 upper triangular matrix, $W \in \mathbb{R}^{2 \times (n-2)}$, and $A_3$ is $H_2'A_2$ minus its first column and first row.
+
+\hdashrule{\linewidth}{0.5pt}{0.2mm 1mm}
+\begin{flalign*}
+&\text{In general, } \qquad
+H_k =
+\begin{bmatrix}
+    I_{k-1} & \mathbf{0}\\
+    \mathbf{0} & H_k'
+\end{bmatrix} \, . &
+\end{flalign*}
+
+
+$H_k$ is a \textbf{Householder} matrix corresponding to $v = \begin{bmatrix} 0 &v' \end{bmatrix}^T$. Where $0 \in \mathbb{R}^{k-1}$ and $H_k'$ corresponds to $v'$.\\
+Hence, $H_nH_{n-1}\cdots H_1 A = R$\\
+And, $A = H_1H_2\cdots H_n R = QR$
+
+\hdashrule{\linewidth}{0.5pt}{0.2mm 1mm}
+
+For $c = Q^Tb = H_nH_{n-1} \cdots H_1 b$ and $w = H_k H_{k-1} \cdots H_1 b$,
+\[
+H_kw = 
+\begin{bmatrix}
+    I_{k-1} & \mathbf{0}\\
+    \mathbf{0} & H_k'
+\end{bmatrix}
+=
+\begin{bmatrix}
+    w_1\\
+    w_2
+\end{bmatrix}
+=
+\begin{bmatrix}
+    w_1\\
+    H_k'w_2
+\end{bmatrix} \, ,
+\]
+
+where $w_1 \in \mathbb{R}^{k-1}$, $w_2 \in \mathbb{R}^{m+1-k}$
+
+\columnbreak
+\[Hu = u - \left( 2\frac{v^Tu}{v^Tu} \right)v\]
+\begin{flalign*}
+    \text{Apply to,} \quad HA &=
+    H \begin{bmatrix}
+        a_{*1} & a_{*2} \cdots & a_{*n}
+    \end{bmatrix}\\
+    &= 
+    \begin{bmatrix}
+        Ha_{*1} & Ha_{*2} \cdots & Ha_{*n}
+    \end{bmatrix} &
+\end{flalign*}
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+
+\vspace{-0.35cm}
+\subsection*{Given Rotations}
+\[
+Ga = 
+\begin{bmatrix}
+    c & s\\
+    -s & c
+\end{bmatrix}
+\begin{bmatrix}
+    a_1\\
+    a_2
+\end{bmatrix}
+=
+\begin{bmatrix}
+    \alpha\\
+    0
+\end{bmatrix}
+\]
+\begin{flalign*}
+&\text{If } |a_1| > |a_2|, \quad
+t=\frac{a_2}{a_1} \, , \quad c = \frac{1}{\sqrt{1+t^2}} \, , \quad s = ct &\\
+&\text{If } |a_2| > |a_1|, \quad
+\tau=\frac{a_1}{a_2} \, , \quad s = \frac{1}{\sqrt{1+\tau^2}} \, , \quad c = s\tau & 
+\end{flalign*}
+
+
+\hdashrule{\linewidth}{0.5pt}{0.2mm 1mm}
+\textbf{Example: }
+\[
+Ga =
+\begin{bmatrix}
+    1 & 0 & 0 & 0 & 0\\
+    0 & c & 0 & s & 0\\
+    0 & 0 & 1 & 0 & 0\\
+    0 & -s & 0 & c & 0\\
+    0 & 0 & 0 & 0 & 1
+\end{bmatrix}
+\begin{bmatrix}
+    a_1\\
+    a_2\\
+    a_3\\
+    a_4\\
+    a_5
+\end{bmatrix}
+=
+\begin{bmatrix}
+    a_1\\
+    \alpha\\
+    a_3\\
+    0\\
+    a_5
+\end{bmatrix}
+\]
+
+Iterate until the first column of $A_{m \times n}$ is 
+$
+\begin{bmatrix}
+    \alpha & \mathbf{0}_{m-1}
+\end{bmatrix}
+$
+and repeat until $G_kG_{k-1} \cdots G_1A = R$, like \textbf{Householder}, and $A = QR$ and $c = Q^Tb$.\\
+\hrule
+\vspace{-0.3cm}
+\section{Nonlinear Equations}
+\textbf{Given} $f: \mathbb{R}^n \rightarrow \mathbb{R}^n$, find $x \in \mathbb{R}^n$ such that $f(x) = 0$.
+\[
+f(x) = 
+\begin{bmatrix}
+    f_1(x_1, x_2, \cdots, x_n)\\
+    f_1(x_1, x_2, \cdots, x_n)\\
+    \vdots\\
+    f_1(x_1, x_2, \cdots, x_n)\\
+\end{bmatrix}
+=
+\begin{bmatrix}
+    0\\
+    0\\
+    \vdots\\
+    0
+\end{bmatrix}
+\]
+
+\textbf{Theorem (Bolzano's)} If $f$ is a continuous function on a closed interval [$a$, $b$], and $f(a)$ and $f(b)$ differ in sign, then there must be aroot within the interval [$a$, $b$].
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+\vspace{-0.65cm}
+
+\subsection*{Interval Bisection}    
+$m = a + (b-a)/2$ be the midpoint of [$a$, $b$]\\
+
+\textbf{Case I: }If $\text{sign}(f(m)) \neq \text{sign}(f(a))$ then there is a root of $f$ in [$a$, $m$] \\
+\textbf{Case II: }If $\text{sign}(f(m)) \neq \text{sign}(f(b))$ then there is a root of $f$ in [$m$, $b$]
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+\vspace{-0.65cm}
+\subsection*{\small{Convergence Rates (Iterative Method)}}
+$x^{(k)}$ is the approximation at an iteration $k$, $x^*$ is the true value, $e^{(k)} = x^{(k)} - x^*$.
+
+An iterative method converges with \textbf{rate $r$} if 
+\[
+\lim_{k \rightarrow \infty} \frac{||e^{(k+1)}||}{||e^{(k)}||^r} = C
+\]
+for some finite constant $C > 0$.
+
+$r=1$ and $C<1$: \textbf{Linear}\\
+$r>1$: \textbf{Superlinear}\\
+$r=2$: \textbf{Quadratic}
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+\vspace{-0.7cm}
+\subsection*{Taylor Series}
+Approximate $f(x) = 0$ at $x = x^{(k)}$
+\[
+\scalebox{0.9}{$
+\begin{aligned}
+f(x) &= \sum_{n=0}^\infty \frac{f^{(n)}(a)}{n!} (x-a)^n\\
+0 &= f(x^{(k)}) + f'(x^{(k)})(x - x^{(k)}) + \ldots\\ 
+0 &\approx f(x^{(k)}) + hf'(x^{(k)})\\
+\end{aligned}
+$}
+\]
+
+So, $h = -f(x^{(k)})/f'(x^{(k)})$
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+\vspace{-0.7cm}
+\subsection*{Newton's Method}
+\[
+\boxed{
+\begin{aligned}
+    &x^{(0)} = \text{initial guess}\\
+    &\text{for } k = 0, 1, 2, \ldots \\
+    & \quad x^{(k+1)} = x^{(k)} - f(x^{(k)})/f'(x^{(k)})\\
+    &\text{end}
+\end{aligned}
+}
+\]
+
+\columnbreak
+\subsection*{Secant Method}
+\textbf{Drawback of Newton's Method: } must evaluate $f(x^{(k)})$ and $f'(x^{(k)})$ at each iteration.\\
+
+Instead, $
+f'(x^{(k)}) \approx \frac{f\left( x^{(k)} \right) - f\left( x^{(k-1)} \right)}{x^{(k)} - x^{(k-1)}}
+$
+\[
+\boxed{
+\begin{aligned}
+    &x^{(0)} \, , x^{(1)} = \text{initial guess}\\
+    &\text{for } k = 1, 2, \ldots \\
+    & \quad x^{(k+1)} = x^{(k)} - \frac{f(x^{(k)})( x^{(k)} - x^{(k-1)} )}{( f( x^{(k)}) - f( x^{(k-1)}))}\\
+    &\text{end}
+\end{aligned}
+}
+\]
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+\vspace{-0.7cm}
+\subsection*{Systems of Nonlinear Equations}
+
+Given a funtion $f: \mathbb{R}^n \rightarrow \mathbb{R}^m$, its first derivative is the \textbf{Jacobian}, which is the $m$-by-$n$ matrix.
+\[
+\nabla f(x) = 
+\begin{bmatrix}
+\frac{\partial f_1}{\partial x_1} & \frac{\partial f_1}{\partial x_2} & \cdots & \frac{\partial f_1}{\partial x_n}\\
+\frac{\partial f_2}{\partial x_1} & \frac{\partial f_2}{\partial x_2} & \cdots & \frac{\partial f_2}{\partial x_n}\\
+\vdots & \vdots & \ddots & \vdots\\
+\frac{\partial f_m}{\partial x_1} & \frac{\partial f_m}{\partial x_2} & \cdots & \frac{\partial f_m}{\partial x_n}\\
+\end{bmatrix}
+\]
+
+\hdashrule{\linewidth}{0.5pt}{0.2mm 1mm}
+
+\textbf{Example: }
+Let $
+f(x) = 
+\begin{bmatrix}
+    x_1x_2 + x_3\\
+    x_1x_3^3 + x_2x_3
+\end{bmatrix}
+$
+
+\[
+\begin{aligned}
+\nabla f(x) &= 
+\begin{bmatrix}
+\frac{\partial f_1}{\partial x_1} & \frac{\partial f_1}{\partial x_2}  & \frac{\partial f_1}{\partial x_3}\\
+\frac{\partial f_2}{\partial x_1} & \frac{\partial f_2}{\partial x_2} & \frac{\partial f_2}{\partial x_3}
+\end{bmatrix}\\
+&=
+\begin{bmatrix}
+    x_2 & x_1 & 1\\
+    x_3^3 & x_3 & 3x_1x_3^2 + x_2
+\end{bmatrix}
+\end{aligned}
+\]
+
+% \hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+% \vspace{-0.7cm}
+\subsection*{Newton's Method for System of Nonlinear Equations}
+\[
+\boxed{
+\begin{aligned}
+    &x^{(0)} = \text{initial guess}\\
+    &\text{for } k = 0, 1, 2, \ldots \\
+    & \quad x^{(k+1)} = x^{(k)} - \left( \nabla f(x^{(k)}) \right)^{-1}f(x^{(k)})\\
+    &\text{end}
+\end{aligned}
+}
+\]
+But, solve $\nabla f(x^{(k)})h^{(k)} = -f(x^{(k)})$ for $h^{(k)}$ by \textbf{GEPP} is more efficient.
+
+
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+\vspace{-0.7cm}
+\subsection*{Broyden's Method\\\footnotesize{(Most Efficient Secant Updating Method)}}
+\[
+\boxed{
+\scalebox{0.95}{$
+\begin{aligned}
+    &x^{(0)} = \text{initial guess}\\
+    &B^{(0)} = \text{initial guess}\\
+    &\text{for } k = 0, 1, 2, \ldots\\
+    & \quad \text{solve } B^{(k)}h^{(k)} = -f(x^{(k)}) \text{ for } h^{(k)}\\ 
+    & \quad x^{(k+1)} = x^{(k)} + h^{(k)}\\
+    & \quad y^{(k)} = f(x^{(k)}) - f(x^{(k)})\\
+    & \quad B^{(k+1)} = B^{(k)} + \frac{ (y^{(k)} - B^{(k)}h^{(k)})(h^{(k)})^T }{(h^{(k)})^T h^{(k)}}\\
+    & \text{end}
+\end{aligned}
+$}
+}
+\]
+\textbf{Broyden's} method updates $B^{(k)}$ by minimizing $||B^{(k+1)} - B^{(k)}||_F$.\\
+
+$B^{(0)} = \nabla f(x^{(0)})$ --- or $I$, for simplicity.\\
+
+\hrule
+\vspace{-0.3cm}
+\section{Optimization}
+\textbf{The Problem: } Given $f: \mathbb{R} \rightarrow \mathbb{R}$, find $x$ that minimizes $f(x)$. Such $x$ is called a \textbf{minimizer} and often denoted as $x^*$.\\
+
+\textbf{(Informal) Definition: } $x^*$ is a local minimizer of $f$ when $f(x^*)$ is smaller than or equal to the function values of all points \textbf{near} $x^*$.
+
+% \hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+% \vspace{-0.7cm}
+\subsection*{Successive Parabolic Interpolation}
+\[
+\scalebox{1}{$
+v^* = v - \frac{1}{2} \frac{(v-u)^2(f(v)-f(w)) - (v-w)^2(f(v)-f(u))}{(v-u)(f(v)-f(w)) - (v-w)^2(f(v)-f(u))}
+$}
+\]
+Replace $u$ by $w$, $w$by $v$, and $v$ by $v^*$. \\Repeat until convergence.\\
+convergence rate $r \approx 1.324$
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+\vspace{-0.7cm}
+\subsection*{Newton's Method\\ \footnotesize{(One-Dimensional Optimization)}}
+\[
+f(x+h) \approx f(x) + f'(x)h
+\]
+Given $g(h) = f(x+h)$. The minimum of $g(h)$ is the point where $g'(h) = 0$ ($x = x^{(k)}$)
+\[
+\begin{aligned}
+g(h) &= f(x^{(k)}) + f'(x^{(k)})h\\
+g'(h) &= f'(x^{(k)}) + f''(x^{(k)})h = 0\\
+\end{aligned}
+\]
+So, $h = -f'(x^{(k)})/f''(x^{(k)})$
+\[
+\boxed{
+\begin{aligned}
+    &x^{(0)} = \text{initial guess}\\
+    &\text{for } k = 0, 1, 2, \ldots\\
+    & \quad x^{(k+1)} = x^{(k)} -f'(x^{(k)})/f''(x^{(k)})\\
+    &\text{end}
+\end{aligned}
+}
+\]
+Therefore, quadratic convergence.
+
+% \hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+% \vspace{-0.7cm}
+\subsection*{\small{Derivatives of Multivariate Functions}}
+Suppose $f: \mathbb{R}^n \rightarrow \mathbb{R}$. The \textbf{gradient} of $f$ is the $n$-vector of partial derivatives.
+\[
+\nabla f(x) =
+\begin{bmatrix}
+    \frac{\partial f}{\partial x_1}\\
+    \frac{\partial f}{\partial x_2}\\
+    \vdots \\
+    \frac{\partial f}{\partial x_n}\\
+\end{bmatrix} \, ,
+\]
+where $x_i$ is the $i$-th entry of $x$.
+
+\hdashrule{\linewidth}{0.5pt}{0.2mm 1mm}
+% \vspace{-0.1cm}
+The \textbf{Hessian} matrix (second derivative) 
+% of $f: \mathbb{R}^n \rightarrow \mathbb{R}$: 
+\[
+\nabla^2f(x) =
+\begin{bmatrix}
+    \frac{\partial^2 f}{\partial x_1^2} & \cdots & \frac{\partial f}{\partial x_n \partial x_1} \\
+    \vdots & \ddots & \vdots \\
+    \frac{\partial^2 f}{\partial x_1 \partial x_n} & \cdots & \frac{\partial f}{\partial x_n^2} \\
+\end{bmatrix}
+\]
+
+\begin{flalign*}
+& \text{Hence, } \quad [\nabla^2 f(x)]_{ij} = \frac{\partial^2 f}{\partial x_j \partial x_i} = \frac{\partial}{\partial x_j} \left( \frac{\partial f}{\partial x_i} \right) &
+\end{flalign*}
+
+\textbf{Theorem} If both $\frac{\partial}{\partial x_j} \left( \frac{\partial f}{\partial x_i} \right)$ and $\frac{\partial}{\partial x_i} \left( \frac{\partial f}{\partial x_j} \right)$ are well-defined and continuous, then 
+\[
+\frac{\partial}{\partial x_j} \left( \frac{\partial f}{\partial x_i} \right) = \frac{\partial}{\partial x_i} \left( \frac{\partial f}{\partial x_j} \right)
+\]
+
+% \hdashrule{\linewidth}{0.5pt}{0.2mm 1mm}
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+\vspace{-0.7cm}
+\subsection*{Newton's Method\\ \footnotesize{(High-Dimensional Optimization)}}
+
+\textbf{Theorem } If $x^*$ is a local minimizer of $f$, then $\nabla f(x^*) = 0$ and $\nabla^2f(x^*)$ is symmetric positive semi-definite. This is called the \textbf{necessary condition} of local minimizer.\\
+
+\textbf{Theorem } If $x^*$ is a point such that $\nabla f(x^*) = 0$ and $\nabla^2f(x^*)$ is symmetric positive definite, then $x^*$ is a local minimizer of $f$. This is called the \textbf{sufficient condition} of local minimizer.\\
+
+\textbf{Taylor Series} for $f : \mathbb{R}^n \rightarrow \mathbb{R}$:
+\[
+f(x+h) \approx f(x) + (\nabla f(x))^Th + \frac{1}{2}h^T(\nabla^2 f(x))h
+\]
+% Then,
+\[
+\boxed{
+\begin{aligned}
+    &x^{(0)} = \text{initial guess}\\
+    &\text{for } k = 0,1,2,\ldots\\
+    & \quad \text{solve } (\nabla^2f(x^{(k)}))h^{(k)} = -\nabla f(x^{(k)}) \text{ for } h^{(k)}\\
+    & \quad x^{(k+1)} = x^{(k)} + h^{(k)}\\
+    &\text{end}
+\end{aligned}
+}
+\]
+
+
+\columnbreak
+% \hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+% \vspace{-0.7cm}
+\subsection*{BFGS Method\\ \footnotesize{(Unconstrained Optimization)}}
+
+
+\[
+\boxed{
+\begin{aligned}
+    &x^{(0)} = \text{initial guess}\\
+    &B^{(0)} = \text{initial guess}\\
+    &\text{for } k = 0,1,2,\ldots\\
+    & \quad \text{solve } B^{(k)}h^{(k)} = -\nabla f(x^{(k)}) \text{ for } h^{(k)}\\
+    & \quad x^{(k+1)} = x^{(k)} + h^{(k)}\\
+    & \quad y^{(k)} = \nabla f(x^{(k+1)}) - \nabla f(x^{(k)})\\
+    & \quad B^{(k+1)} = B^{(k)} + \frac{{y^{(k)}(y^{(k)})^T}}{(y^{(k)})^Th^{(k)}}\\
+    & \qquad \qquad \quad - \frac{B^{(k)}h^{(k)}(h^{(k)})^TB^{(k)}}{(h^{(k)})^T B^{(k)} h^{(k)}}\\
+    &\text{end}
+\end{aligned}
+}
+\]
+
+$B^{(0)} = \nabla f(x^{(0)})$ --- or $I$, for simplicity.\\
+
+\vspace{0.2cm}
+\hrule
+\vspace{-0.2cm}
+\section{IVP for ODE}
+
+\vspace{-0.1cm}
+\textbf{Problem: } Approximate $y(t)$ by a sequence of discrete points.\\($t_0$, $y_0$), ($t_1$, $y_1 $), $\ldots$ where $0=t_0<t_1<\ldots$
+\[
+\frac{dy}{dx} = f(t, y) \; ; \quad y(0) = y_0
+\]
+
+\fbox{
+\begin{minipage}{0.9\linewidth}
+1. A solution $y(t)$ of the ODE $y' = f(t,y)$ is \textbf{stable} if, after perturbing the initial value (i.e., changing the value of $y_0$ slightly), the perturbed solution remains close to the original solution.\\
+
+2. A stable solution is \textbf{asymptotically stable} if, not only does the perturbed solution remain close to he original, they converge toward each other over time.
+\end{minipage}
+}\\
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+\vspace{-0.7cm}
+\subsection*{Euler's Method (EM)}
+
+\vspace{-0.3cm}
+\begin{flalign*}
+&\text{By }\textbf{Taylor series}, \quad
+y_{k+1} = y_k +h_kf(t_k, y_k) &
+\end{flalign*}
+
+\vspace{-0.1cm}
+$h_k = t_{k+1}-t_k$: \textbf{step size}.\\($0$, $y_0$): an \textbf{initial condition}.\\
+
+\fbox{
+\begin{minipage}{0.9\linewidth}
+1. \textbf{EM} is \textbf{one-step}: formula for $y_{k+1}$ involves only $y_k$ (not $y_{k-1}, y_{k-2}, \ldots$).\\
+2. \textbf{EM} is \textbf{explicit}: The equatin is a formula for $y_{k+1}$, i.e. it can be turned into an assignment statement.\\(directly provide value)
+\end{minipage}
+}\\
+
+\hdashrule{\linewidth}{0.5pt}{0.2mm 1mm}
+
+\vspace{0.05cm}
+\textbf{Truncation Errors}
+\begin{enumerate}
+    \item \textbf{Global truncation error} at $k$-th step is $e_k = y_k - y(t_k)$
+    \item Assume all the previous steps are exact, i.e. $y_i = y(t_i)$ for $i=0$ to $k-1$, \textbf{local truncatoin error} at the $k-th$ step is $l_k=y_k - y(t_k)$
+\end{enumerate}
+
+\vspace{-0.05cm}
+\hdashrule{\linewidth}{0.5pt}{0.2mm 1mm}
+
+\vspace{0.1cm}
+\textbf{Order (or Accuracy)}
+A numerical method is said to be of \textbf{order $p$} if \(
+l_k = O(h^{p+1}_k)
+\)\\
+
+For order of \textbf{Euler's} method,
+\[
+\scalebox{0.9}{$
+l_{k+1} = y(t_{k+1}) - y_{k+1} = y''(t_k)\frac{h_k^2}{2} + \ldots = O(h_k^2)
+$}
+\]
+
+\textbf{Theorem} For a wide class of ODE's, and numerical integration methods (including EM), if the local truncation error is $O(h_k^{p+1})$, the the global truncation error is $O(h_k^{p+1})$.
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+
+\vspace{-0.4cm}
+\subsection*{AB2 Method (2$^{\mathbf{nd}}$-order)\\
+\footnotesize{Linear Multi Step (LMS)}}
+% Adams-Bashforth second-order
+\[
+y_{k+1} = y_k + \frac{3h}{2}f(t_k,y_k) - \frac{h}{2}f(t_{k-1}, y_{k-1})
+\]
+
+\columnbreak
+% \hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+\subsection*{Runge-Kutta Method\\ \footnotesize{(a.k.a Heun's Method)}}
+\[
+y_{k+1}=y_k + \frac{h}{2}(s_1 + s_2)
+\; ; \quad
+\begin{aligned}
+s_1 &= f(t_k, y_k)\\
+s_2 &= f(t_k+h,y_k+hs_1)
+\end{aligned}
+\]
+
+\textbf{Stiffness}
+\textbf{Example: } \textbf{Euler's} Method
+\[
+\frac{dy}{dx} = ay\, , \quad a < 0 
+\]
+Since $a<0$, the solution converges to zero.
+\textbf{EM} on this ODE.
+\[
+\begin{aligned}
+    y_{k+1} &= y_k + ahy_k\\
+    \text{Then \qquad} y_k &= (1+ah)^ky_0
+\end{aligned}
+\]
+Hence, with \textbf{EM}, the computed solution will decay to zero as $t$ increases only if 
+\[
+\begin{aligned}
+&|1+ah|< 1\\
+\text{i.e., \qquad} &0 < h <-\frac{2}{a}
+\end{aligned}
+\]
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+\vspace{-0.7cm}
+\subsection*{BDF\\ \footnotesize{(Backward Differentiation Formulas)}}
+\textbf{BDF} are commonly used methods for stiff problems.
+It is an \textbf{implicit method}. Need to solve the equation to find $y_{k+1}$.\\
+
+\textbf{Simple first-order BDF (backward EM)}
+\[
+y_{k+1} = y_k + hf(t_{k+1}, y_{k+1})
+\]
+
+\hdashrule{\linewidth}{0.5pt}{0.2mm 1mm}
+
+\vspace{0.1cm}
+\textbf{Example: } $\frac{dy}{dt} = at\, , \quad a<0$
+\[
+\begin{aligned}
+y_{k+1} &= y_k + ahy_{k+1}\\
+\text{So \quad} y_k &= \left( \frac{1}{1-ah} \right)^k y_0\\
+\text{Then \quad} \lvert &\frac{1}{1-ah} \rvert < 1
+\end{aligned}
+\]
+Hence, \textbf{any $\mathbf{h > 0}$}, i.e. \textbf{unconditionally stable}
+
+\hdashrule{\linewidth}{0.5pt}{0.2mm 1mm}
+\textbf{Implicit Trapezoid Method}
+\[
+y_{k+1} = y_k + h \left( \frac{f(t_k, y_k) + f(t_{k+1}, y_{k+1})}{2} \right)
+\]
+
+\hdashrule{\linewidth}{0.5pt}{0.2mm 1mm}
+\textbf{Higher-Order ODE}\\
+\textbf{A System of Coupled ODEs}
+\[
+y'(t) = 
+\begin{bmatrix}
+    \frac{dy_1(t)}{dt}\\
+    \frac{dy_2(t)}{dt}\\
+    \vdots\\
+    \frac{dy_n(t)}{dt}
+\end{bmatrix}
+=\begin{bmatrix}
+    f_1(t,y)\\
+    f_2(t,y)\\
+    \vdots\\
+    f_n(t,y)\\
+\end{bmatrix}
+=f(t,y)
+\]
+\textbf{Example: }
+\[
+\begin{bmatrix}
+    y_1'\\
+    y_2'
+\end{bmatrix}
+=
+\begin{bmatrix}
+    ty_2-y_1\\
+    2y_1^2y_2 + t^2
+\end{bmatrix}\, , \quad
+y_0 =
+\begin{bmatrix}
+    -2\\1
+\end{bmatrix}
+\]
+Follow \textbf{EM},
+\[
+y_{k+1} = y_k + hf(t_k, y_k) \, , \quad h \text{ is scalar} 
+\]
+
+\vspace{-0.05cm}
+\hdashrule{\linewidth}{0.5pt}{0.2mm 1mm}
+
+\vspace{0.05cm}
+\textbf{Higher-Order ODE}\\
+\textbf{Example: } $y'' = t + y + y'$ [$u_1 = y$, $u_2 = y'$]
+\[
+\begin{bmatrix}
+    u_1'\\
+    u_2'
+\end{bmatrix}
+=
+\begin{bmatrix}
+    u_2\\
+    t+u_1+u_2
+\end{bmatrix}
+\]
+
+\vspace{0.3cm}
+\hrule
+
+\vspace{-0.3cm}
+\section{Singular Value Decomposition}
+
+\textbf{Theorem} Any matrix $A \in \mathbb{R}^{m \times n}$ can be factored
+\[
+A = U \Sigma V^T
+\]
+where $U \in \mathbb{R}^{m \times m}$ and $V \in \mathbb{R}^{n \times n}$ are orthogonal, and $\Sigma \in \mathbb{R}^{m \times n}$ is diagonal whose diagonal entries are donoted as $\sigma_1, \sigma_2, \ldots, \sigma_p$ where $p = \min (m,n)$ and satisfying $\sigma_1 \geq \sigma_2 \geq \ldots \geq \sigma_p \geq 0.$\\
+
+\textbf{Lemma} If $Q$ is a orthogonal matrix, then $||QA||_2 || =||AQ||_2 ||= ||A||_2$.\\
+
+\textbf{Lemma} If $D \in \mathbb{R}^{m \times n}$ is diagonal, then $||D||_p = \max|d_{ii}|$ for any $p$.\\
+
+\textbf{Theorem} If $A =U \Sigma V^T$, then$||A||_2 = \sigma_1.$\\
+In general, calculating $||A||_2$ is more expensive than $||A||_1$ or $||A||_\infty$.   
+
+\columnbreak
+\textbf{Solving Least-Squares Problems with SVD for $\mathbf{m > n}$ and full rank case}
+\[
+Ax=b \quad \text{So, \quad} x = V \Sigma_1 U_1^Tb
+\]
+for $U =
+\begin{bmatrix}
+U_{1_{m \times n}}  & U_{2_{m \times (m-n)}}
+\end{bmatrix}
+$ \\
+and $
+\Sigma =
+\begin{bmatrix}
+    \Sigma_{1_{n \times n}} & \mathbf{0}_{(m-n) \times n}
+\end{bmatrix}^T
+$\\
+\textbf{Note: } $U_1^TU_1 = I$
+
+\hdashrule{\linewidth}{0.5pt}{0.2mm 1mm}
+\vspace{0.05cm}
+\textbf{Solving Least-Squares Problems with SVD for the general case}
+\[
+x = \Sigma_{\sigma_i \neq 0} \frac{u_i^T b}{\sigma_i}v_i
+\]
+where $u_i$ is the $i$-th column of $U$, and $v_i$ is the $i$-th column of $V$
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+
+% \vspace{-5cm}
+\textbf{Theorem} If $\sigma_1$ to $\sigma_n$ are singular values of $A \in \mathbb{R}^{n \times n}$ and $A$ is invertible, then $||A^{-1}|| = 1/\sigma_n$
+\[
+A^{-1} = (U \Sigma V^T)^{-1} = V \Sigma^{-1} U^T
+\]
+\[
+\Sigma^{-1} = 
+\begin{bmatrix}
+    \frac{1}{\sigma_1} & 0 & \cdots & 0\\
+    0 & \frac{1}{\sigma_2} & \cdots & 0\\
+    \vdots & \vdots & \ddots & \vdots\\
+    0 & 0 & \cdots & \frac{1}{\sigma_n}\\
+\end{bmatrix}
+\]
+
+% \columnbreak
+
+SVD of $A^{-1}$ is $A^{-1} = (VP)(P \Sigma^{-1}P)(PU^T)$
+where 
+\[
+P = \begin{bmatrix}
+    & & 1\\
+    & \iddots & \\
+    1 & & \\
+\end{bmatrix} \, ,
+\quad    
+P\Sigma^{-1}P = 
+\begin{bmatrix}
+    \frac{1}{\sigma_n} & \cdots & 0\\
+    \vdots & \ddots & \vdots \\
+    0 & \cdots & \frac{1}{\sigma_1}\\
+\end{bmatrix}
+\]
+Therefore, $||A^{-1}||_2 = \frac{1}{\sigma_n}$, as $1/\sigma_n$ is the largest singular value of $A^{-1}.$
+
+So, $\text{cond}_2(A) = ||A^{-1}||_2 \cdot ||A||_2 = \frac{\sigma_1}{\sigma_n}$\\
+
+\textbf{Theorem} Suppose $A \in \mathbb{R}^{m \times n}$ with rank($A$) = $n$. Then cond$_2(A^TA)$ = cond$_2(A)^2$.\\
+\textbf{Theorem} If $A  U \Sigma V^T$, then rank($A$) = the number of nonzero singular values ($\sigma_i$).\\
+\textbf{Theorem} Let $A \in \mathbb{R}^{m \times n}$ whose SVD is $A = U \Sigma V^T$. Then $A = \sum_{i=1}^{\min(m,n)} \sigma_i u_i v_i^T$, where $u_i$ and $v_i$ are the $i$-th column of $U$ and $V$, respectively.\\
+\textbf{Theorem} Let $A_k = \sum_{i=1}^k \sigma_i u_i v_i^T$. Then ran($A_k$) $\leq k$ and
+\[
+\begin{aligned}
+||A - A_k||_F = \min\{ &||A-B||_F : B \in \mathbb{R}^{m \times n}\\
+&\text{satisfying rank}(B) \leq k\}
+\end{aligned}
+\]
+
+By working with $A_k$ instead, only the first $k$ columns of $U$ and $V$, as well as the first $k$ singular values,  are stored, and use them to get the entries of $A_k$ as needed.
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+% \vspace{-1.3cm}
+\subsection*{The Moore-Penrose Pseudoinverse}
+The pseudoinverse of a scalar $\sigma$ is 
+\[
+\sigma^+ = \begin{cases}
+    \frac{1}{\sigma} \quad \text{if }\sigma \neq 0\, , \\
+    0 \quad \text{otherwise.}
+\end{cases}
+\]
+
+The pseudoinverse of a matrix $A \in \mathbb{R}^{m \times n}$, is given by $A^+ = V \Sigma^+ U^T$,
+where $A = U \Sigma V^T$ is the SVD of $A$ and $\Sigma^+$ is the $n \times m$ matrix with diagonals entries $\sigma_1^+, \sigma_2^+, \ldots$.
+
+$A^+b$ is the least-squares solution to $Ax \approxeq b$ ($x = A^+b$). If $A$ is square and non-singular, then $A^+ = A^{-1}$.
+
+% \columnbreak
+% \hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+
+% \vspace{-1cm}
+\subsection*{Finding SVD}
+% \vspace{-0.6cm}
+\textbf{From lecture:}
+\begin{enumerate}
+    \item The eigenvectors of $A^TA$ make up columns of $V$.
+    \item The eigenvectors of $AA^T$ make up columns of $U$.
+    \item The square roots of eigenvalues of $AA^T$ (and of $A^T A$) are singular values.
+\end{enumerate}
+
+\columnbreak
+
+\textbf{From inspection:}
+\begin{enumerate}
+    \item The eigenvectors of $A^TA$ make up columns of $V$, and order by eigenvectors of $A^TA$ in descending order.
+    \item The square roots of eigenvalues of $AA^T$ (and of $A^T A$) are singular values (forming $\Sigma$).
+    \item As $A = U \Sigma V^T$, then $AV = U\Sigma$. That is, $Av_i = u_i\sigma_i$ and $u_i = \frac{Av_i}{\sigma_i}$.
+\end{enumerate}
+
+\hrule
+
+\vspace{-0.45cm}
+\section{Eigenvalues and Eigenvectors}
+
+$A \in \mathbb{R}^{n \times n}$. If $Ax = \lambda x$, $\lambda$ is a scalar, $x \neq 0$, then $\lambda$ is an \textbf{eigenvalue} and $x$ is an eigenvector of $A$.
+
+\textbf{Note: } If $Ax = \lambda x$, then $A(\alpha x) = \alpha (Ax) = \alpha (\lambda x) = \lambda (\alpha x)$
+
+\textbf{Theorem} If $A$ is symmetric, then all eigenvalues of $A$ are real.
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+
+\vspace{-0.5cm}
+\subsection*{Characteristic Polynomial}
+\[
+\begin{aligned}
+Ax &= \lambda x\\
+Ax - \lambda x & =\mathbf{0}\\ 
+(A - \lambda I) x & =\mathbf{0}\\ 
+\end{aligned}
+\]
+
+Then det$(A - \lambda I) = 0$ is a polynomial in $\lambda$. The roots of this polynomial are eigenvalues of $A$.\\
+
+\fbox{
+\begin{minipage}{0.9\linewidth}
+Two complications
+\begin{enumerate}
+    \item Even if $A$ is real, eigenvalues and eigenvectors may be complex.
+    \item In general, eigenvalues are irrational numbers even if entries of $A$ are rational.
+\end{enumerate}
+\end{minipage}
+}\\
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+
+\vspace{-0.55cm}
+\subsection*{Power Method}
+
+\[
+\boxed{
+\begin{aligned}
+    &\text{Given } A \in \mathbb{R}^{n \times n}\\
+    &x^{(0)} := \text{arbitrary nonzero vector}\\
+    &\text{for } k = 0, 1, 2, \ldots\\
+    & \quad x^{(k+1)} = Ax^{(k)}\\
+    &\text{end}
+\end{aligned}
+}
+\]
+
+\textbf{Theorem} If $A$ has a \textbf{unique} eigenvalue with maximum absolute value, then power method converges to (a multiple of) the eigenvector corresponding to that eigenvalue.
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+
+\vspace{-0.5cm}
+\subsection*{Normalized Power Method}
+Avoid overflows or underflows
+\[
+\boxed{
+\begin{aligned}
+    &\text{Given } A \in \mathbb{R}^{n \times n}\\
+    &x^{(0)} := \text{arbitrary nonzero vector}\\
+    &\text{for } k = 0, 1, 2, \ldots\\
+    & \quad \tilde{x}^{(k)} = Ax^{(k)}\\
+    & \quad f^{(k)} = ||\tilde{x}^{(k)}||_2\\
+    & \quad x^{(k+1)} = \tilde{x}^{(k)}/f^{(k)}\\
+    &\text{end}
+\end{aligned}
+}
+\]
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+
+\vspace{-0.55cm}
+\subsection*{Rayleigh Quotient}
+Find eigenvalue $\lambda$ by solving 
+\[
+\min_\lambda ||Ax^{(k)} - \lambda x^{(k)}||_2
+\]
+That is, $\lambda = \frac{(x^{(k)})^TAx^{(k)}}{(x^{(k)})^Tx^{(k)}}$,\\or $\lambda = (x^{(k)})^TAx^{(k)}$ if $x^{(k)}$ is normalized.
+
+\columnbreak
+% \hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+\subsection*{Inverse Power Method}
+
+Return eigenvector of $A^{-1}$ 
+% corresponding with the eigenvalue with maximum absolute (minimum eigenvalue of $A$)
+
+\[
+\boxed{
+\scalebox{0.85}{$
+\begin{aligned}
+    &\text{Given } A \in \mathbb{R}^{n \times n}\\
+    &x^{(0)} := \text{arbitrary nonzero vector}\\
+    &\text{for } k = 0, 1, 2, \ldots\\
+    & \quad x^{(k+1)} = A^{-1}x^{(k)} \quad \text{(plus GEPP/normalization)}\\
+    &\text{end}
+\end{aligned}
+$}
+}
+\]
+
+\textbf{Theorem} If $A \in \mathbb{R}^{n \times n}$ is invertible, then $A$ and $A^{-1}$ have the same eigenvectors, and the eigenvalues of $A^{-1}$ are reciprocals of the eigenvalues of $A$ (i.e. if $\lambda$ is an eigenvalue of $A$, then $1/\lambda$ is an eigenvalue of $A^{-1}$)\\
+
+\textbf{Theorem} If $A$ has a unique eigenvalue with minimum absolute value, then inverse power method converges to (a multiple of) the eigenvector corresponding to that eigenvalue.
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+
+\vspace{-0.4cm}
+\subsection*{Inverse Shifted Power Method}
+
+\[
+\boxed{
+\scalebox{0.8}{$
+\begin{aligned}
+    &\text{Given } A \in \mathbb{R}^{n \times n}\\
+    &x^{(0)} := \text{arbitrary nonzero vector}\\
+    &\text{for } k = 0, 1, 2, \ldots\\
+    & \quad x^{(k+1)} = (A - \sigma I)^{-1}x^{(k)} \quad \text{(plus GEPP/normalization)}\\
+    &\text{end}
+\end{aligned}
+$}
+}
+\]
+$\sigma$ is a scalar chosen in advance.\\
+
+\textbf{Theorem} If $(A - \sigma I)$ is invertible, then $A$ and $(A - \sigma I)^{-1}$ have the same eigenvectors. $\lambda$ is an eigenvalue if and only if $1/(\lambda - \sigma)$ is an eigenvalue of $(A - \sigma I)^{-1}$
+
+\[
+\begin{aligned}
+Ax &= \lambda x\\
+(A - \sigma I ) x &= (\lambda - \sigma)x\\
+\left( \frac{1}{\lambda - \sigma} \right) &= (A - \sigma I)^{-1} x
+\end{aligned}
+\]
+
+\textbf{Theorem} If $A$ has a \textbf{unique} eigenvalue that is closet to $\sigma$, then inverse shifted power method converges to (a multiple of) the eigenvector corresponding to that eigenvalue.
+% \textbf{Examples: } If A has the following eigenvalues: -10, -10, 1, 1 and $\sigma = 5$, then the inverse shifted power method converges to the eigenvector associated to 6.
+
+
+\hdashrule{\linewidth}{0.5pt}{1mm 1mm}
+
+\vspace{-0.4cm}
+\subsection*{QR Iteration}
+
+\[
+\boxed{
+\begin{aligned}
+    &M^{(0)} = A\\
+    &\text{for } k = 0, 1, 2, \ldots\\
+    & \quad \text{factor }M^{(k)} = Q^{(k)}R^{(k)} \\ & \quad \text{(know $M^{(k)}$ compute $Q^{(k)}$ and $R^{(k)}$)}\\ 
+    & \quad \text{factor }M^{(k+1)} := R^{(k)}Q^{(k)}\\
+    & \quad \text{(know $Q^{(k)}R^{(k)}$ compute $M^{(k+1)}$)}\\
+    &\text{end}
+\end{aligned}
+}
+\]
+With \textbf{QR iteration}
+\begin{itemize}
+    \item $M^{(k)}$ converges to a diagonal matrix whose diagonal entries are the eigenvalues of $A$
+    \item The convergence is slow or nonexistent if any two eigenvalues have close magnitudes
+\end{itemize}
+
+\vspace{-0.05cm}
+\hdashrule{\linewidth}{0.5pt}{0.2mm 1mm}
+
+$\text{cond}_p(A) = ||A||_p \cdot ||A^{-1}||_p$, cond\(_p(I) = 1\)\\
+{
+\tiny
+\begin{flalign*}
+    &||A||_F = \left( \sum_{i=1}^m \sum_{j=1}^n a_{ij}^2 \right), &\\
+    &||A||_p = \max_{x \neq 0} \frac{||Ax||_p}{||x||_p} = \max_{||x||_p = 1} ||Ax||_p, &\\
+    &||A||_1 = \max_{j=1 \text{ to } n} \sum_{i=1}^m |a_{ij}|, \, ||A||_\infty = \max_{i=1 \text{ to } m} \sum_{j=1}^n |a_{ij}| &
+\end{flalign*}
+}
+
+{
+% \fontsize{4}{5}\selectfont
+\tiny
+\textbf{Cholesky Factorization}
+\begin{flalign*}
+& n = \text{size}(A, 1), \,L = \text{deepcopy}(A) & \\
+& \text{for } k = 1:n & \\
+& \quad L[k, k] = \sqrt{L[k, k]}, \, \quad L[k, k+1:n] = \mathbf{0} & \\
+& \quad \text{for } i = k+1:n ; \; L[i, k] \mathrel{/}= L[k, k] ; \; \text{end} & \\
+& \quad \text{for } j = k+1:n, \, \text{for } i = k+1:n & \\
+& \quad \quad \quad L[i, j] \mathrel{-}= L[i, k] \cdot L[j, k] & \\
+& \quad \text{end}, \, \text{end} & \\
+& \text{end} & \\
+% & \text{return } L &
+\end{flalign*}
+}
+
+\clearpage
+
+\end{multicols}
+
+\end{document}
+
+% Improve accuracy of first-order forward difference of $\sin(x)$ at $x=1\, , \ h=0.5.$ ($p=1$ and $r=2$ for forward difference)
+% \[
+% \begin{aligned}
+% F(h) &= F(0.5) = \frac{\sin(1.5) - sin(1)}{0.5}\\
+% F(h/2) &= F(0.25) = \frac{sin(1.25) - sin(1)}{0.25}
+% \end{aligned}
+% \]
+% And,
+% \[
+% \begin{aligned}
+% a_0 &= F(h) + \frac{F(h) - F(h/q)}{q^{-p}-1} \\
+% &= \left. \frac{d}{dx}\sin(x) \, \right|_{x=1\, ,  \; h=0.5}
+% \end{aligned}
+% \]
+
+% \subsection*{Automatic Differentiation (AD)}
+% \textbf{Forward-Mode AD: }
+% \begin{lstlisting}[language=Matlab]
+%     function [y, Dy] = fun(x)
+%         u = 2*x + 3;
+%         Du = 2;
+%         v = u*(x+2);
+%         Dv = Du*(x+2) + u;
+%         y = u+v;
+%         Dy = Du + Dv;
+%     end
+% \end{lstlisting}
+
